@@ -1,4 +1,4 @@
-type ElementDataType = {
+export type ElementDataType = {
     tagName: keyof HTMLElementTagNameMap
     attributes?: {
         name: string
@@ -20,6 +20,7 @@ type ElementDataType = {
         value: string
     }[]
     defaultOption?: string
+    children?: ElementDataType[]
 }
 type CreateElementType = (data: ElementDataType) => HTMLElement
 
@@ -44,6 +45,13 @@ const createElement: CreateElementType = (data) => {
 
     if (data.options) {
         setElementOptions(element, data.options, data.defaultOption);
+    }
+
+    if (data.children) {
+        data.children.forEach((child) => {
+            const childElement = createElement(child)
+            element.appendChild(childElement)
+        })
     }
 
     return element;

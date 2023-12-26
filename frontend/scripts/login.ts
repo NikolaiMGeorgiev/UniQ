@@ -1,9 +1,10 @@
-import { clearError } from './form';
-import { login } from './api'
+import { clearError } from './utils/form';
+import { login } from './resources/api'
 import { showMessage, clearMessage } from './utils/messages';
-import { DEFAULT_ERROR_MESSAGE } from './constants'
+import { DEFAULT_ERROR_MESSAGE } from './resources/constants'
 import { isFormElement } from './utils/typecheck';
 import { validate, validator } from './utils/validation';
+import { redirect } from './utils/redirect';
 
 const schema = {
     password: validator().password().required('Password is a required field').typeError('Please input a correct password'),
@@ -35,11 +36,14 @@ const onLogin = async (event: SubmitEvent) => {
         const response = await login(new FormData(loginForm))
 
         if (response.success) {
-            // TODO: redirect 
+            redirect('login')
             return
         }
 
-        showMessage('error-message', response?.error?.message)
+        if ('error' in response && response.error) {
+            response.error?.message
+            showMessage('error-message', response.error?.message)
+        }
     } catch(err) {
         showMessage('error-message', DEFAULT_ERROR_MESSAGE)
     }

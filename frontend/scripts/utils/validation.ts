@@ -1,4 +1,4 @@
-import { addError } from "../form"
+import { addError } from "./form"
 
 export const validator = function() {
     let type = 'string'

@@ -1,7 +1,8 @@
-import { register } from './api';
-import { DEFAULT_ERROR_MESSAGE } from './constants';
-import { clearError } from './form';
+import { register } from './resources/api';
+import { DEFAULT_ERROR_MESSAGE } from './resources/constants';
+import { clearError } from './utils/form';
 import { clearMessage, showMessage } from './utils/messages';
+import { redirect } from './utils/redirect';
 import { isFormElement } from './utils/typecheck';
 import { validate, validator } from './utils/validation';
 
@@ -34,11 +35,14 @@ const onRegister = async (event: SubmitEvent) => {
         const response = await register(new FormData(loginForm))
 
         if (response.success) {
-            window.location.pathname = 'login.html'
+            redirect('login')
             return
         }
 
-        showMessage('error-message', response?.error?.message)
+        if ('error' in response && response.error) {
+            response.error?.message
+            showMessage('error-message', response.error?.message)
+        }
     } catch(err) {
         showMessage('error-message', DEFAULT_ERROR_MESSAGE)
     }
