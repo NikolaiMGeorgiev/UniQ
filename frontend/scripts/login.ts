@@ -1,41 +1,18 @@
-import { addError, clearError } from './form';
+import { clearError } from './form';
 import { login } from './api'
-import { showMessage, clearMessage } from './messages';
+import { showMessage, clearMessage } from './utils/messages';
 import { DEFAULT_ERROR_MESSAGE } from './constants'
-import { isFormElement, isInputElement } from './utils/typecheck';
+import { isFormElement } from './utils/typecheck';
+import { validate, validator } from './utils/validation';
 
-const isValidEmail = (email: string): boolean => {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase())
+const schema = {
+    password: validator().password().required('Password is a required field').typeError('Please input a correct password'),
+    email: validator().email().required('Email is a required field').typeError('Please input a correct email'),
 }
 
-const isValidPassword = (password: string) => {
-    const re = /[a-zA-Z0-9]/;
-    return password.length > 5 && re.test(password);
-}
-
-const isFieldValid = (field: 'email' | 'password'): boolean => {
-    const element = document.getElementById(field)
-
-    if (!element) return false
-
-    if (isInputElement(element) && field === 'email') {
-        return isValidEmail(element.value)
-    }
-
-    if (isInputElement(element) && field === 'password') {
-        return isValidPassword(element.value)
-    }
-
-    return false
-}
-
-// TODO: convert into something like yup for validation
-const isFormValid = () => isFieldValid('email') && isFieldValid('password')
-
-const addFormErrors = () => {
-    if (!isFieldValid('password')) addError(document.getElementById('password'), 'Invalid password')
-    if (!isFieldValid('email')) addError(document.getElementById('email'), 'Invalid email')
+const clearErrorsOnChange = () => {
+    document.getElementById('email')?.addEventListener('change', () => clearError('email'))
+    document.getElementById('password')?.addEventListener('change', () => clearError('password'))
 }
 
 const onInput = (inputId: string) => clearError(inputId)
@@ -48,9 +25,8 @@ const onLogin = async (event: SubmitEvent) => {
     if (!loginForm || !isFormElement(loginForm)) {
         return
     }
-
-    if (!isFormValid()) {
-        addFormErrors()
+    
+    if (!validate(schema)) {
         event.preventDefault();
         return
     }
@@ -66,11 +42,12 @@ const onLogin = async (event: SubmitEvent) => {
         showMessage('error-message', response?.error?.message)
     } catch(err) {
         showMessage('error-message', DEFAULT_ERROR_MESSAGE)
-    } 
+    }
 }
 
 (() => {
     document.getElementById('login-form')?.addEventListener('submit', onLogin)
     document.getElementById('password')?.addEventListener('input', () => onInput('password'))
     document.getElementById('email')?.addEventListener('input', () => onInput('email'))
+    clearErrorsOnChange()
 })()

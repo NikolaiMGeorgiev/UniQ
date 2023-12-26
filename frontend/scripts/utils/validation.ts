@@ -1,11 +1,13 @@
-import { addError } from "./form"
+import { addError } from "../form"
 
 export const validator = function() {
     let type = 'string'
     let required = true
+    let minLength = 0
 
     let requiredErrorMessage = ''
     let typeErrorMessage = ''
+    let minLengthErrorMessage = ''
 
     let allowedValues: string[] = []
 
@@ -16,6 +18,10 @@ export const validator = function() {
         },
         number: function() {
             type = 'number'
+            return this
+        },
+        boolean: function() {
+            type = 'boolean'
             return this
         },
         password: function() {
@@ -35,6 +41,11 @@ export const validator = function() {
             required = false
             return this
         },
+        minLength: function(l: number, errorMessage?: string) {
+            minLength = l
+            minLengthErrorMessage = errorMessage ?? `This field should be at least ${minLength} characters long`
+            return this
+        },
         oneOf: function(options: string[]) {
             type = 'array'
             allowedValues = options
@@ -46,6 +57,8 @@ export const validator = function() {
         },
         test: function(value: any) {
             if (required && !value) return requiredErrorMessage
+
+            if (minLength > 0 && value.length < minLength) return minLengthErrorMessage
 
             if (type === 'string' && typeof value !== 'string') return typeErrorMessage
             if (type === 'number' && isNaN(parseInt(value))) return typeErrorMessage
@@ -66,38 +79,46 @@ const isValidPassword = (password: string) => {
     return password.length > 5 && re.test(password);
 }
 
-const getFieldValue = (field: HTMLInputElement) => {
-    if (field.type === 'radio') {
-        return field.checked
-    }
+const getValue = (field: HTMLInputElement) => field.value
 
-    return field.value
+const getRadioInputValue = (fields: HTMLInputElement[]) => {
+    let value = false
+
+    fields.map((field) => value ||= field.checked)
+
+    return value
 }
 
 // TODO: fix schema type
-export const validate = (schema1: Record<string, any>) => {
+export const validate = (schema: Record<string, any>) => {
+    let valid = true
     const fields = document.getElementsByTagName('input')
 
     const findFieldByName = (name: string) => {
+        let foundFields: HTMLInputElement[] = []
         for (let field of fields) {
-            if (field.name === name) return field
+            if (field.name === name) foundFields = [...foundFields, field]
         }
 
-        return null
+        return foundFields.length === 1 ? foundFields[0] : foundFields
     }
 
-    Object.keys(schema1).forEach((key) => {
-        const fieldValidator = schema1[key]
+    Object.keys(schema).forEach((key) => {
+        const fieldValidator = schema[key]
         const field = findFieldByName(key)
 
         if (!field) return
 
-        const fieldValue = getFieldValue(field)
+        const fieldValue = Array.isArray(field) ? getRadioInputValue(field) : getValue(field)
 
         const errorMessage = fieldValidator.test(fieldValue)
         if (errorMessage) {
-            const fieldOrWrapper = field.type === 'radio' ? document.getElementById(`${key}-wrapper`) : field
+            valid = false
+            const fieldOrWrapper = Array.isArray(field) ? document.getElementById(`${key}-wrapper`) : field
             addError(fieldOrWrapper, errorMessage)
         }
     })
+
+    return valid
 }
+

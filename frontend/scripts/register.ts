@@ -1,17 +1,58 @@
-import { validate, validator } from './validation';
+import { register } from './api';
+import { DEFAULT_ERROR_MESSAGE } from './constants';
+import { clearError } from './form';
+import { clearMessage, showMessage } from './utils/messages';
+import { isFormElement } from './utils/typecheck';
+import { validate, validator } from './utils/validation';
 
 const schema = {
-    password: validator().password().required('Password is a required field').typeError('Please input a correct password'),
+    password: validator()
+        .password()
+        .required('Password is a required field')
+        .typeError('Please input a correct password')
+        .minLength(7, 'Password should be at least 7 characters long'),
     email: validator().email().required('Email is a required field').typeError('Please input a correct email'),
     name: validator().string().required('Name is a required field').typeError('Please input a correct name'),
-    role: validator().oneOf(['student', 'teacher']).required('Role is a required field')
+    role: validator().boolean().required('Role is a required field')
 }
 
-const onRegister = (event: SubmitEvent) => {
+const onRegister = async (event: SubmitEvent) => {
     event.preventDefault();
-    validate(schema)
+    clearMessage('error-message')
+    const loginForm = document.getElementById('register-form')
+
+    if (!loginForm || !isFormElement(loginForm)) {
+        return
+    }
+    
+    if (!validate(schema)) {
+        event.preventDefault();
+        return
+    }
+
+    try {
+        const response = await register(new FormData(loginForm))
+
+        if (response.success) {
+            window.location.pathname = 'login.html'
+            return
+        }
+
+        showMessage('error-message', response?.error?.message)
+    } catch(err) {
+        showMessage('error-message', DEFAULT_ERROR_MESSAGE)
+    }
+}
+
+const clearErrorsOnChange = () => {
+    document.getElementById('student')?.addEventListener('change', () => clearError('role-wrapper'))
+    document.getElementById('teacher')?.addEventListener('change', () => clearError('role-wrapper'))
+    document.getElementById('name')?.addEventListener('change', () => clearError('name'))
+    document.getElementById('email')?.addEventListener('change', () => clearError('email'))
+    document.getElementById('password')?.addEventListener('change', () => clearError('password'))
 }
 
 (() => {
     document.getElementById('register-form')?.addEventListener('submit', onRegister)
+    clearErrorsOnChange()
 })()
