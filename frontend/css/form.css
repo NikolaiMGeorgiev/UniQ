@@ -1,0 +1,33 @@
+
+.form {
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.input-label {
+    color: #666666;
+    font-size: 0.75rem;
+}
+
+.input {
+    border: none;
+    border-radius: 2px;
+    height: 30px;
+    width: 100%;
+}
+
+.form-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.15rem;
+    margin: 1rem 0;
+}
+
+.error-message {
+    font-size: 0.75rem;
+    color: #EE7070;
+}
