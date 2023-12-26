@@ -1,0 +1,15 @@
+{
+  "name": "UniQ",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./backend/index.js",
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0"
+  }
+}
