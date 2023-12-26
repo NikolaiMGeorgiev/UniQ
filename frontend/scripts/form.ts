@@ -24,7 +24,11 @@ export const addError: AddErrorType = (input, errorMessage) => {
         ]
     })
 
-    input.parentNode?.insertBefore(error, input.nextSibling)
+    if (input.children.length) {
+        input.appendChild(error)
+    } else {
+        input.parentNode?.appendChild(error)
+    }
 }
 
 export const clearError: ClearErrorType = (inputId) => {

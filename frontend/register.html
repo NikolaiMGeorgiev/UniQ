@@ -2,12 +2,12 @@
 <html lang="bg">
     <head>
         <meta charset="UTF-8">
-        <title>UniQ | Login</title>
+        <title>UniQ | Register</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="css/common.css">
         <link rel="stylesheet" href="css/form.css">
         <link rel="stylesheet" href="css/grey-container.css">
-        <script type='module' src="scripts/login.ts" defer></script>
+        <script type='module' src="scripts/register.ts" defer></script>
     </head>
     <body>
         <header class="header">
@@ -21,8 +21,8 @@
           </header>
         <main>
             <div class="grey-container">
-                <form class="form" id="login-form" novalidate="novalidate">
-                    <legend class="grey-container-header" id="form-title">Login</legend>
+                <form class="form" id="register-form" novalidate="novalidate">
+                    <legend class="grey-container-header" id="form-title">Register</legend>
                     <div>
                         <div class="form-item">
                             <label for="email" class="input-label">Email:</label>
@@ -32,11 +32,26 @@
                             <label for="password" class="input-label">Password:</label>
                             <input type="password" id="password" name="password" placeholder="Input password" class="input">
                         </div>
+                        <div class="form-item">
+                            <label for="name" class="input-label">Name:</label>
+                            <input type="text" id="name" name="name" placeholder="Input name" class="input">
+                        </div>
+                        <div class="form-item" id="role-wrapper">
+                            <p class="input-label">Please select your role:</p>
+                            <div>
+                                <input type="radio" id="student" name="role" value="student" />
+                                <label for="student">Student</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="teacher" name="role" value="teacher" />
+                                <label for="teacher">Teacher</label>
+                            </div>
+                        </div>
                     </div>
                     <div id="error-message" class="error-message"></div>
                     <div class="grey-container-footer">
-                        <a href="register.html">No profile? Click here to register.</a>
-                        <button id="login-btn" class="button-primary" type="submit">Log in</button>
+                        <a href="login.html">Already have a profile? Click here to login.</a>
+                        <button id="login-btn" class="button-primary" type="submit">Register</button>
                     </div>
                 </form>
             </div>
