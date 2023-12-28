@@ -1,3 +1,4 @@
+import { rooms } from "./testData";
 import { Room } from "./types";
 
 const apiRoute = './api';
@@ -44,27 +45,22 @@ export const fetchRooms: FetchRoomsType = async () => {
     return {
         success: true,
         error: null,
-        data: [
-            {
-                id: '123',
-                creatorId: '1',
-                name: 'room A',
-                description: 'room for an exam',
-                startDate: '02-03-2024',
-                type: 'non-schedule',
-                status: 'active',
-                turnDuration: 30,
-            },
-            {
-                id: '124',
-                creatorId: '1',
-                name: 'room B Asd',
-                description: 'room for an exam 2',
-                startDate: '02-04-2024',
-                type: 'schedule',
-                status: 'break',
-                turnDuration: 20,
-            }
-        ]
+        data: rooms
+    }
+}
+
+type FetchRoomType = (id: string) => Promise<ResponseType<Room | undefined>>
+export const fetchRoom: FetchRoomType = async (id) => {
+    // const response = await fetch(`localhost:3000/api/room/${id}`, {
+    //     method: 'GET',
+    //     mode: 'cors'
+    // })
+
+    // return response.json();
+
+    return {
+        success: true,
+        error: null,
+        data: rooms.find((room) => room.id === id)
     }
 }

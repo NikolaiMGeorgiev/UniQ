@@ -1,54 +1,73 @@
+import { createExpandableRoomContainer } from "./components/expandableRoomContainer"
 import { fetchRooms } from "./resources/api"
-import { Room } from "./resources/types"
-import createElement, { ElementDataType } from "./utils/element"
+import { ElementDataType } from "./utils/element"
+import { redirect } from "./utils/redirect"
 
-const createRoomElement = (roomData: Room) => {
-    const nameElementConfig: ElementDataType = {
-        tagName: 'p',
+const getButtons = (roomId: string) => {
+    const joinButton: ElementDataType = {
+        tagName: 'button',
         attributes: [
-            { name: 'class', value: 'title' },
+            { name: 'class', value: `rooms-button-join` },
+            { name: 'id', value: `button-join-${roomId}` },
         ],
         properties: [
-            { name: 'innerHTML', value: roomData.name }
+            { name: 'innerHTML', value: 'Join' },
         ],
-    }
-
-    const statusElementConfig: ElementDataType = {
-        tagName: 'p',
-        attributes: [
-            { name: 'class', value: `status--${roomData.status}` },
-        ],
-        properties: [
-            { name: 'innerHTML', value: roomData.status }
-        ],
-    }
-
-    return createElement({
-        tagName: 'div',
-        attributes: [
-            { name: 'class', value: 'item' },
-        ],
-        children: [
-            nameElementConfig, statusElementConfig
+        eventListeners: [
+            { event: 'click', listener: () => redirect({ path: 'room', id: roomId }) }
         ]
-    })
+    }
+
+    const editButton: ElementDataType = {
+        tagName: 'button',
+        attributes: [
+            { name: 'class', value: `rooms-button-edit` },
+            { name: 'id', value: `button-edit-${roomId}` },
+        ],
+        properties: [
+            { name: 'innerHTML', value: 'Edit' },
+        ],
+        eventListeners: [
+            { event: 'click', listener: () => console.log('@@@ Edit clicked') }
+        ]
+    }
+
+    const deleteButton: ElementDataType = {
+        tagName: 'button',
+        attributes: [
+            { name: 'class', value: `rooms-button-delete` },
+            { name: 'id', value: `button-delete-${roomId}` },
+        ],
+        properties: [
+            { name: 'innerHTML', value: 'Delete' },
+        ],
+        eventListeners: [
+            { event: 'click', listener: () => console.log('@@@ Delete clicked') }
+        ]
+    }
+
+    return [joinButton, editButton, deleteButton]
 }
 
 const loadData = async () => {
-    const data = await fetchRooms()
+    try {
+        const data = await fetchRooms()
 
-    if (data.error) {
+        if (data.error) {
+            // TODO: handle error
+            return
+        }
+
+        const container = document.getElementById('rooms-container')
+
+        data.data.forEach((roomData) => {
+            const element = createExpandableRoomContainer(roomData, 'rooms', false, getButtons(roomData.id))
+
+            container?.appendChild(element)
+        })
+    } catch(err) {
         // TODO: handle error
-        return
     }
-
-    const container = document.getElementById('rooms-container')
-
-    data.data.forEach((el) => {
-        const element = createRoomElement(el)
-
-        container?.appendChild(element)
-    })
 }
 
 (() => {

@@ -35,7 +35,7 @@ const onRegister = async (event: SubmitEvent) => {
         const response = await register(new FormData(loginForm))
 
         if (response.success) {
-            redirect('login')
+            redirect({ path: 'login' })
             return
         }
 

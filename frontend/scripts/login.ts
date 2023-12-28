@@ -36,7 +36,7 @@ const onLogin = async (event: SubmitEvent) => {
         const response = await login(new FormData(loginForm))
 
         if (response.success) {
-            redirect('login')
+            redirect({ path: 'login' })
             return
         }
 
