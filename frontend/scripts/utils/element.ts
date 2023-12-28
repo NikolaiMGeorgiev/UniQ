@@ -5,7 +5,7 @@ export type ElementDataType = {
         value: string
     }[]
     properties?: {
-        name: 'innerHTML'
+        name: 'innerHTML' | 'type'
         value: string
     }[]
     style?: {
@@ -32,7 +32,12 @@ const createElement: CreateElementType = (data) => {
     });
 
     data.properties?.forEach(property => {
-        element[property.name] = property.value;
+        if (property.name === 'type') {
+            (element as HTMLButtonElement)[property.name] = property.value as 'button' | 'reset' | 'submit';
+
+        } else {
+            element[property.name] = property.value;
+        }
     });
 
     // data.style?.forEach(style => {

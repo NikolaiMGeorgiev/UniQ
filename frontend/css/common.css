@@ -76,6 +76,16 @@ a:active {
     height: 30px;
     color: #788BFF;
     border-radius: 2px;
+    width: 100%;
+}
+
+.button-danger {
+    background-color: #F5F5F5;
+    border: none;
+    height: 30px;
+    color: #EE7070;
+    border-radius: 2px;
+    width: 100%;
 }
 
 .main-container {

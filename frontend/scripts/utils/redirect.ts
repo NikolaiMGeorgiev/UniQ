@@ -1,7 +1,7 @@
 type RedirectProps = {
     path: 'login' | 'register' | 'rooms' | 'index'
 } | {
-    path: 'room'
+    path: 'room' | 'add-edit'
     id: string
 }
 

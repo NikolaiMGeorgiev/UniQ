@@ -1,34 +1,26 @@
 import createElement from './element.js';
 
-type AddErrorType = (input: HTMLElement | null, errorMessage: string) => void
+type AddErrorType = (name: string, errorMessage: string) => void
 
 type ClearErrorType = (inputId: string) => void
 
-export const addError: AddErrorType = (input, errorMessage) => {
-    if (!input) {
-        return
-    }
-
-    if (document.getElementById(`error-message-${input.id}`)) {
+export const addError: AddErrorType = (name, errorMessage) => {
+    if (document.getElementById(`error-message-${name}`)?.childNodes.length) {
         return
     }
 
     const error = createElement({
         tagName: 'small',
         attributes: [
-            {name: 'id', value: `error-message-${input.id}`},
-            {name: 'class', value: 'error-message'}
+            { name: 'id', value: `error-message-${name}` },
+            { name: 'class', value: 'error-message' }
         ],
         properties: [
-            {name: 'innerHTML', value: errorMessage}
+            { name: 'innerHTML', value: errorMessage }
         ]
     })
 
-    if (input.children.length) {
-        input.appendChild(error)
-    } else {
-        input.parentNode?.appendChild(error)
-    }
+    document.getElementById(`error-message-${name}`)?.appendChild(error)
 }
 
 export const clearError: ClearErrorType = (inputId) => {
@@ -36,5 +28,5 @@ export const clearError: ClearErrorType = (inputId) => {
 
     if (!errorElement) return
 
-    errorElement.remove()
+    errorElement.innerHTML = ''
 }

@@ -1,5 +1,5 @@
-import { rooms } from "./testData";
-import { Room } from "./types";
+import { rooms, students } from "./testData";
+import { Room, Student } from "./types";
 
 const apiRoute = './api';
 
@@ -62,5 +62,53 @@ export const fetchRoom: FetchRoomType = async (id) => {
         success: true,
         error: null,
         data: rooms.find((room) => room.id === id)
+    }
+}
+
+type CreateRoomType = (roomData: BodyInit) => Promise<ResponseType<null>>
+export const createRoom: CreateRoomType = async (roomData) => {
+    const response = await fetch(`localhost:3000/api/room`, {
+        method: 'POST',
+        mode: 'cors',
+        body: roomData,
+    })
+
+    return response.json();
+}
+
+type UpdateRoomType = (id: string, roomData: BodyInit) => Promise<ResponseType<null>>
+export const updateRoom: UpdateRoomType = async (id, roomData) => {
+    const response = await fetch(`localhost:3000/api/room/${id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        body: roomData,
+    })
+
+    return response.json();
+}
+
+type DeleteRoomType = (id: string) => Promise<ResponseType<null>>
+export const deleteRoom: DeleteRoomType = async (id) => {
+    const response = await fetch(`localhost:3000/api/room/${id}`, {
+        method: 'DELETE',
+        mode: 'cors'
+    })
+
+    return response.json();
+}
+
+type FetchStudentsType = () => Promise<ResponseType<Student[]>>
+export const fetchStudents: FetchStudentsType = async () => {
+    // const response = await fetch(`localhost:3000/api/students`, {
+    //     method: 'GET',
+    //     mode: 'cors'
+    // })
+
+    // return response.json();
+
+    return {
+        success: true,
+        error: null,
+        data: students
     }
 }

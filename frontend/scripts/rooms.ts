@@ -1,7 +1,19 @@
 import { createExpandableRoomContainer } from "./components/expandableRoomContainer"
-import { fetchRooms } from "./resources/api"
+import { deleteRoom, fetchRooms } from "./resources/api"
 import { ElementDataType } from "./utils/element"
 import { redirect } from "./utils/redirect"
+
+const handleDeleteRoom = async (roomId: string) => {
+    try {
+        const response = await deleteRoom(roomId)
+
+        if (!response.success || response.error) {
+            // TODO: handle error
+        }
+    } catch (err) {
+        // TODO: handle error
+    }
+}
 
 const getButtons = (roomId: string) => {
     const joinButton: ElementDataType = {
@@ -28,7 +40,7 @@ const getButtons = (roomId: string) => {
             { name: 'innerHTML', value: 'Edit' },
         ],
         eventListeners: [
-            { event: 'click', listener: () => console.log('@@@ Edit clicked') }
+            { event: 'click', listener: () => redirect({ path: 'add-edit', id: roomId }) }
         ]
     }
 
@@ -42,7 +54,7 @@ const getButtons = (roomId: string) => {
             { name: 'innerHTML', value: 'Delete' },
         ],
         eventListeners: [
-            { event: 'click', listener: () => console.log('@@@ Delete clicked') }
+            { event: 'click', listener: () => handleDeleteRoom(roomId) }
         ]
     }
 

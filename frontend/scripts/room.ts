@@ -1,14 +1,8 @@
 import { createExpandableRoomContainer } from "./components/expandableRoomContainer"
 import { fetchRoom } from "./resources/api"
 import { ElementDataType } from "./utils/element"
+import { getRoomIdFromURL } from "./utils/getRoomIdFromURL"
 import { redirect } from "./utils/redirect"
-
-const getRoomIdFromURL = () => window?.location?.search
-    ?.replace('?', '')
-    .split('&')
-    .map((el) => el.split('='))
-    .find((el) => el[0] === 'id')?.[1]
-
 
 const getButtons = () => {
     const breakButton: ElementDataType = {

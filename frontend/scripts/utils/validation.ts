@@ -1,4 +1,6 @@
 import { addError } from "./form"
+import { getSelectedOptions } from "./getSelectedStudentIds"
+import { isInputElement } from "./typecheck"
 
 export const validator = function() {
     let type = 'string'
@@ -22,6 +24,14 @@ export const validator = function() {
         },
         boolean: function() {
             type = 'boolean'
+            return this
+        },
+        date: function() {
+            type = 'date'
+            return this
+        },
+        multiselect: function() {
+            type = 'multiselect'
             return this
         },
         password: function() {
@@ -56,18 +66,23 @@ export const validator = function() {
             return this
         },
         test: function(value: any) {
-            if (required && !value) return requiredErrorMessage
+            if (required && isEmptyValue(getValue(value, type))) return requiredErrorMessage
 
             if (minLength > 0 && value.length < minLength) return minLengthErrorMessage
 
             if (type === 'string' && typeof value !== 'string') return typeErrorMessage
             if (type === 'number' && isNaN(parseInt(value))) return typeErrorMessage
+            if (type === 'date' && isNaN((new Date(value)).valueOf()) ) return typeErrorMessage
             if (type === 'email' && !isValidEmail(value)) return typeErrorMessage
             if (type === 'password' && !isValidPassword(value)) return typeErrorMessage
             if (type === 'array' && !allowedValues.includes(value)) return typeErrorMessage
+            if (type === 'multiselect' && !getSelectedOptions().length) return typeErrorMessage
         }
     }
 }
+
+const getValue = (value: any, type: string) => type === 'multiselect' ? getSelectedOptions() : value
+const isEmptyValue = (value: any) => Array.isArray(value) ? !value.length : !value
 
 const isValidEmail = (email: string): boolean => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -79,12 +94,26 @@ const isValidPassword = (password: string) => {
     return password.length > 5 && re.test(password);
 }
 
-const getValue = (field: HTMLInputElement) => field.value
+const getFieldValue = (field: HTMLElement) => {
+    if (Array.isArray(field)) {
+        return getRadioInputValue(field)
+    }
 
-const getRadioInputValue = (fields: HTMLInputElement[]) => {
+    if (isInputElement(field)) {
+        return field.value
+    }
+
+    return getSelectedOptions()
+}
+
+const getRadioInputValue = (fields: HTMLElement[]) => {
     let value = false
 
-    fields.map((field) => value ||= field.checked)
+    fields.map((field) => {
+        if (isInputElement(field)) {
+            value ||= field.checked
+        }
+    })
 
     return value
 }
@@ -92,30 +121,21 @@ const getRadioInputValue = (fields: HTMLInputElement[]) => {
 // TODO: fix schema type
 export const validate = (schema: Record<string, any>) => {
     let valid = true
-    const fields = document.getElementsByTagName('input')
-
-    const findFieldByName = (name: string) => {
-        let foundFields: HTMLInputElement[] = []
-        for (let field of fields) {
-            if (field.name === name) foundFields = [...foundFields, field]
-        }
-
-        return foundFields.length === 1 ? foundFields[0] : foundFields
-    }
 
     Object.keys(schema).forEach((key) => {
         const fieldValidator = schema[key]
-        const field = findFieldByName(key)
+        const fieldNodes = Array.from(document.getElementsByName(key))
+        const field = fieldNodes.length === 1 ? fieldNodes[0] : fieldNodes
 
-        if (!field) return
+        if (!field || (Array.isArray(field) && !field.length)) return
 
-        const fieldValue = Array.isArray(field) ? getRadioInputValue(field) : getValue(field)
+        const fieldValue = Array.isArray(field) ? getRadioInputValue(field) : getFieldValue(field)
 
         const errorMessage = fieldValidator.test(fieldValue)
         if (errorMessage) {
             valid = false
-            const fieldOrWrapper = Array.isArray(field) ? document.getElementById(`${key}-wrapper`) : field
-            addError(fieldOrWrapper, errorMessage)
+            const errorFieldName = Array.isArray(field) ? `${key}-wrapper` : key
+            addError(errorFieldName, errorMessage)
         }
     })
 
