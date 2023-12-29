@@ -26,12 +26,12 @@
 
 .rooms-status--active {
     margin: 4px 0;
-    color: #4D894F;
+    color: #4d894f;
 }
 
 .rooms-status--break {
     margin: 4px 0;
-    color: #EEA570;
+    color: #eea570;
 }
 
 .rooms-status--not-started {
@@ -41,7 +41,7 @@
 
 .rooms-status--closed {
     margin: 4px 0;
-    color: #EE7070;
+    color: #ee7070;
 }
 
 .rooms-description {
@@ -58,7 +58,7 @@
     background: none;
     border: none;
     height: 30px;
-    color: #788BFF;
+    color: #788bff;
     border-radius: 2px;
     text-align: start;
 }
@@ -75,7 +75,7 @@
     background: none;
     border: none;
     height: 30px;
-    color: #EEA570;
+    color: #eea570;
     border-radius: 2px;
 }
 
@@ -83,7 +83,7 @@
     background: none;
     border: none;
     height: 30px;
-    color: #EE7070;
+    color: #ee7070;
     border-radius: 2px;
 }
 
@@ -91,7 +91,7 @@
     background: none;
     border: none;
     height: 30px;
-    color: #4D894F;
+    color: #4d894f;
     border-radius: 2px;
 }
 

@@ -1,5 +1,5 @@
 .main-container {
-    margin: auto
+    margin: auto;
 }
 
 .room-item {
@@ -10,7 +10,9 @@
     display: flex;
     gap: 1rem;
     justify-content: space-between;
-    box-shadow: 0 4px 8px 0 #D9D9D9, 0 6px 20px 0 #D9D9D9;
+    box-shadow:
+        0 4px 8px 0 #d9d9d9,
+        0 6px 20px 0 #d9d9d9;
 }
 
 .room-info-container {
@@ -29,12 +31,12 @@
 
 .room-status--active {
     margin: 4px 0;
-    color: #4D894F;
+    color: #4d894f;
 }
 
 .room-status--break {
     margin: 4px 0;
-    color: #EEA570;
+    color: #eea570;
 }
 
 .room-status--not-started {
@@ -44,7 +46,7 @@
 
 .room-status--closed {
     margin: 4px 0;
-    color: #EE7070;
+    color: #ee7070;
 }
 
 .room-description {
@@ -64,7 +66,7 @@
     background: none;
     border: none;
     height: 30px;
-    color: #EEA570;
+    color: #eea570;
     border-radius: 2px;
 }
 
@@ -72,7 +74,7 @@
     background: none;
     border: none;
     height: 30px;
-    color: #EE7070;
+    color: #ee7070;
     border-radius: 2px;
 }
 

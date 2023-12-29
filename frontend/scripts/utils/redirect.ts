@@ -1,9 +1,11 @@
-type RedirectProps = {
-    path: 'login' | 'register' | 'rooms' | 'index'
-} | {
-    path: 'room' | 'add-edit'
-    id: string
-}
+type RedirectProps =
+    | {
+          path: 'login' | 'register' | 'rooms' | 'index'
+      }
+    | {
+          path: 'room' | 'add-edit'
+          id: string
+      }
 
 export const redirect = (props: RedirectProps) => {
     if ('id' in props) {

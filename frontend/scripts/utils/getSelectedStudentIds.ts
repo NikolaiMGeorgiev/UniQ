@@ -5,10 +5,11 @@ export const getSelectedOptions = () => {
     if (!container) return []
 
     container.childNodes.forEach((child) => {
-        const childElement = (child as Element)
+        const childElement = child as Element
         if (!childElement.attributes) return
 
-        const includedValue = childElement.attributes.getNamedItem('name')?.value
+        const includedValue =
+            childElement.attributes.getNamedItem('name')?.value
         if (includedValue === 'not-included') return
 
         const id = childElement.attributes.getNamedItem('value')?.value
@@ -17,6 +18,6 @@ export const getSelectedOptions = () => {
             optionIds = [...optionIds, id]
         }
     })
-    
+
     return optionIds ?? []
 }

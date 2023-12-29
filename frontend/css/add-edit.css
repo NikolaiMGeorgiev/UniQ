@@ -17,14 +17,14 @@
 }
 
 .students-options {
-    background-color: #D9D9D9;
+    background-color: #d9d9d9;
     padding: 0.5rem;
     border-radius: 2px;
     font-size: 0.75rem;
     white-space: nowrap;
 }
 .students-options-not-included {
-    background-color: #D9D9D9;
+    background-color: #d9d9d9;
     padding: 0.5rem;
     border-radius: 2px;
     font-size: 0.75rem;
@@ -46,7 +46,7 @@
     border: none;
     background-color: #fff;
     border-radius: 20px;
-    color: #EE7070;
+    color: #ee7070;
 }
 
 .student-add-button {
@@ -55,5 +55,5 @@
     border: none;
     background-color: #fff;
     border-radius: 20px;
-    color: #4D894F;
+    color: #4d894f;
 }

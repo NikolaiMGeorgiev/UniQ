@@ -13,7 +13,7 @@ export type ElementDataType = {
         value: string
     }[]
     eventListeners?: {
-        event: string,
+        event: string
         listener: EventListenerOrEventListenerObject
     }[]
     options?: {
@@ -25,31 +25,33 @@ export type ElementDataType = {
 type CreateElementType = (data: ElementDataType) => HTMLElement
 
 const createElement: CreateElementType = (data) => {
-    const element = document.createElement(data.tagName);
+    const element = document.createElement(data.tagName)
 
-    data.attributes?.forEach(attribute => {
-        element.setAttribute(attribute.name, attribute.value);
-    });
+    data.attributes?.forEach((attribute) => {
+        element.setAttribute(attribute.name, attribute.value)
+    })
 
-    data.properties?.forEach(property => {
+    data.properties?.forEach((property) => {
         if (property.name === 'type') {
-            (element as HTMLButtonElement)[property.name] = property.value as 'button' | 'reset' | 'submit';
-
+            ;(element as HTMLButtonElement)[property.name] = property.value as
+                | 'button'
+                | 'reset'
+                | 'submit'
         } else {
-            element[property.name] = property.value;
+            element[property.name] = property.value
         }
-    });
+    })
 
     // data.style?.forEach(style => {
-    //     element.style[style.name] = style.value; 
+    //     element.style[style.name] = style.value;
     // });
 
-    if(data.eventListeners?.length) {
-        setEventListeners(element, data.eventListeners);
+    if (data.eventListeners?.length) {
+        setEventListeners(element, data.eventListeners)
     }
 
     if (data.options) {
-        setElementOptions(element, data.options, data.defaultOption);
+        setElementOptions(element, data.options, data.defaultOption)
     }
 
     if (data.children) {
@@ -59,7 +61,7 @@ const createElement: CreateElementType = (data) => {
         })
     }
 
-    return element;
+    return element
 }
 
 type SetElementOptionsType = (
@@ -68,29 +70,36 @@ type SetElementOptionsType = (
         value: string
     }[],
     defaultOption?: string
- ) => void
+) => void
 
-const setElementOptions: SetElementOptionsType = (element, options, defaultOption) => options.forEach(option => {
-        const optionElement = document.createElement('option');
-        optionElement.value = option.value;
-        optionElement.text = option.value;
+const setElementOptions: SetElementOptionsType = (
+    element,
+    options,
+    defaultOption
+) =>
+    options.forEach((option) => {
+        const optionElement = document.createElement('option')
+        optionElement.value = option.value
+        optionElement.text = option.value
 
-        if(defaultOption === option.value) {
-            optionElement.selected = true;
+        if (defaultOption === option.value) {
+            optionElement.selected = true
         }
 
-        element.appendChild(optionElement);
-    });
+        element.appendChild(optionElement)
+    })
 
 type SetEventListenersType = (
     element: HTMLElement,
     listeners: {
-        event: string,
+        event: string
         listener: EventListenerOrEventListenerObject
     }[]
 ) => void
 
 const setEventListeners: SetEventListenersType = (element, listeners) =>
-    listeners.forEach(listener => element.addEventListener(listener.event, listener.listener));
+    listeners.forEach((listener) =>
+        element.addEventListener(listener.event, listener.listener)
+    )
 
-export default createElement;
+export default createElement

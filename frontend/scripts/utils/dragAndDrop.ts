@@ -1,7 +1,7 @@
-let draggedElem: Element | null;
+let draggedElem: Element | null
 
 export const onDrop = (event: Event) => {
-    event.preventDefault();
+    event.preventDefault()
     const target = (event.target as HTMLElement).closest('[draggable]')
 
     if (!draggedElem || !target) {

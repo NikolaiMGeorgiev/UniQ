@@ -1,4 +1,4 @@
-import createElement from './element.js';
+import createElement from './element.js'
 
 type AddErrorType = (name: string, errorMessage: string) => void
 
@@ -13,11 +13,9 @@ export const addError: AddErrorType = (name, errorMessage) => {
         tagName: 'small',
         attributes: [
             { name: 'id', value: `error-message-${name}` },
-            { name: 'class', value: 'error-message' }
+            { name: 'class', value: 'error-message' },
         ],
-        properties: [
-            { name: 'innerHTML', value: errorMessage }
-        ]
+        properties: [{ name: 'innerHTML', value: errorMessage }],
     })
 
     document.getElementById(`error-message-${name}`)?.appendChild(error)
