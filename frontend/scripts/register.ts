@@ -4,6 +4,7 @@ import { clearError } from './utils/form'
 import { clearMessage, showMessage } from './utils/messages'
 import { redirect } from './utils/redirect'
 import { isFormElement } from './utils/typecheck'
+import { isUserLoggedIn } from './utils/user'
 import { validate, validator } from './utils/validation'
 
 const schema = {
@@ -73,6 +74,10 @@ const clearErrorsOnChange = () => {
 }
 
 ;(() => {
+    if (isUserLoggedIn()) {
+        return redirect({ path: 'rooms'})
+    }
+
     document
         .getElementById('register-form')
         ?.addEventListener('submit', onRegister)

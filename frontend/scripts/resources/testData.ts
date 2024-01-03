@@ -64,6 +64,7 @@ export const students: Student[] = [
         username: 'ivan_94',
         password: '1234567',
         type: 'student',
+        token: '123',
     },
     {
         id: '12',
@@ -71,6 +72,7 @@ export const students: Student[] = [
         username: 'peter_petrov',
         password: 'pesh0',
         type: 'student',
+        token: '123',
     },
     {
         id: '13',
@@ -78,6 +80,7 @@ export const students: Student[] = [
         username: 'ststst',
         password: 'ststst_000000000',
         type: 'student',
+        token: '123',
     },
     {
         id: '14',
@@ -85,6 +88,7 @@ export const students: Student[] = [
         username: 'kk_atya_123123123123',
         password: 'asdasdasd',
         type: 'student',
+        token: '123',
     },
     {
         id: '15',
@@ -92,5 +96,6 @@ export const students: Student[] = [
         username: 'ivan40',
         password: 'ivan401',
         type: 'student',
+        token: '123',
     },
 ]

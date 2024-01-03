@@ -1,13 +1,15 @@
 import { createExpandableRoomContainer } from './components/expandableRoomContainer'
 import { deleteRoom, fetchRooms } from './resources/api'
-import { ElementDataType } from './utils/element'
+import { Room } from './resources/types'
+import createElement, { ElementDataType } from './utils/element'
 import { redirect } from './utils/redirect'
+import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user'
 
 const handleDeleteRoom = async (roomId: string) => {
     try {
         const response = await deleteRoom(roomId)
 
-        if (!response.success || response.error) {
+        if (!response.success) {
             // TODO: handle error
         }
     } catch (err) {
@@ -63,35 +65,62 @@ const getButtons = (roomId: string) => {
         ],
     }
 
-    return [joinButton, editButton, deleteButton]
+    return isUserStudent() ? [joinButton] : [joinButton, editButton, deleteButton]
+}
+
+const displayElements = (data: Room[]) => {
+    const roomsContainer = document.getElementById('rooms-container')
+    const footer = document.getElementById('footer')
+
+    data.forEach((roomData) => {
+        const element = createExpandableRoomContainer(
+            roomData,
+            'rooms',
+            false,
+            getButtons(roomData.id)
+        )
+
+        roomsContainer?.appendChild(element)
+    })
+
+    if (isUserTeacher()) {
+        const addRoomButton = createElement({
+            tagName: 'button',
+            attributes: [
+                { name: 'id', value: 'button-add-room' },
+                { name: 'class', value: 'button-primary' },
+            ],
+            properties: [
+                { name: 'innerHTML', value: 'Add room' },
+            ],
+            eventListeners: [
+                { event: 'click', listener: () => redirect({ path: 'add-edit' })}
+            ]
+        })
+
+        footer?.appendChild(addRoomButton)
+    }
 }
 
 const loadData = async () => {
     try {
         const data = await fetchRooms()
 
-        if (data.error) {
+        if (!data.success) {
             // TODO: handle error
             return
         }
 
-        const container = document.getElementById('rooms-container')
-
-        data.data.forEach((roomData) => {
-            const element = createExpandableRoomContainer(
-                roomData,
-                'rooms',
-                false,
-                getButtons(roomData.id)
-            )
-
-            container?.appendChild(element)
-        })
+        displayElements(data.data)
     } catch (err) {
         // TODO: handle error
     }
 }
 
 ;(() => {
+    if (!isUserLoggedIn()) {
+        return redirect({ path: 'login'})
+    }
+
     loadData()
 })()

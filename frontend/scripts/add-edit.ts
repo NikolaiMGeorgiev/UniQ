@@ -12,6 +12,7 @@ import { getRoomIdFromURL } from './utils/getRoomIdFromURL'
 import { getSelectedOptions } from './utils/getSelectedStudentIds'
 import { redirect } from './utils/redirect'
 import { isFormElement, isInputElement } from './utils/typecheck'
+import { isUserLoggedIn, isUserStudent } from './utils/user'
 import { validate, validator } from './utils/validation'
 
 const schema = {
@@ -224,7 +225,7 @@ const loadData = async () => {
 
     try {
         const studentsData = await fetchStudents()
-        if (studentsData.error) {
+        if (!studentsData.success) {
             // TODO: handle error
             return
         }
@@ -251,7 +252,7 @@ const loadData = async () => {
     try {
         const roomData = await fetchRoom(roomId)
 
-        if (roomData.error) {
+        if (!roomData.success) {
             // TODO: handle error
             return
         }
@@ -276,6 +277,14 @@ const loadData = async () => {
 }
 
 ;(async () => {
+    if (!isUserLoggedIn()) {
+        return redirect({ path: 'login'})
+    }
+
+    if (isUserStudent()) {
+        return redirect({ path: 'rooms' })
+    }
+
     document
         .getElementById('add-edit-form')
         ?.addEventListener('submit', onSubmit)

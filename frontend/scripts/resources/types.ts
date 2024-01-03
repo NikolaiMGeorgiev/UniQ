@@ -14,6 +14,7 @@ type User = {
     username: string
     name: string
     password: string
+    token: string
 }
 
 export type Student = User & {
@@ -22,4 +23,14 @@ export type Student = User & {
 
 export type Teacher = User & {
     type: 'teacher'
+}
+
+export type ResponseType<T> = {
+    success: true
+    data: T
+} | {
+    success: false
+    error: {
+        message: string
+    }
 }

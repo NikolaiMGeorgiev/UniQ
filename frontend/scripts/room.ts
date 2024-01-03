@@ -3,6 +3,7 @@ import { fetchRoom } from './resources/api'
 import { ElementDataType } from './utils/element'
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL'
 import { redirect } from './utils/redirect'
+import { isUserLoggedIn } from './utils/user'
 
 const getButtons = () => {
     const breakButton: ElementDataType = {
@@ -46,8 +47,9 @@ const loadData = async () => {
         const roomData = await fetchRoom(roomId)
         // const studentsData = await fetchRoom(roomId)
 
-        if (roomData.error) {
+        if (!roomData.success) {
             // TODO: handle error
+            // if 401 -> redirect to login
             return
         }
 
@@ -81,5 +83,9 @@ const loadData = async () => {
 }
 
 ;(() => {
+    if (!isUserLoggedIn()) {
+        return redirect({ path: 'login'})
+    }
+
     loadData()
 })()

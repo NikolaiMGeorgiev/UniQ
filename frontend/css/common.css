@@ -78,6 +78,7 @@ a:active {
     color: #788bff;
     border-radius: 2px;
     width: 100%;
+    margin: 1rem 0 0;
 }
 
 .button-danger {
@@ -87,6 +88,7 @@ a:active {
     color: #ee7070;
     border-radius: 2px;
     width: 100%;
+    margin: 1rem 0 0;
 }
 
 .main-container {
