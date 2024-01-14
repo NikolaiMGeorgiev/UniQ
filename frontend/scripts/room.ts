@@ -1,9 +1,9 @@
 import { createExpandableRoomContainer } from './components/expandableRoomContainer'
-import { fetchRoom } from './resources/api'
+import { fetchRoom, fetchStudents } from './resources/api'
 import { ElementDataType } from './utils/element'
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL'
 import { redirect } from './utils/redirect'
-import { isUserLoggedIn } from './utils/user'
+import { isUserLoggedIn, isUserTeacher } from './utils/user'
 
 const getButtons = () => {
     const breakButton: ElementDataType = {
@@ -36,7 +36,7 @@ const getButtons = () => {
     return [breakButton, endButton]
 }
 
-const loadData = async () => {
+const loadRoomData = async () => {
     const roomId = getRoomIdFromURL()
 
     if (!roomId) {
@@ -64,8 +64,6 @@ const loadData = async () => {
             return redirect({ path: 'rooms' })
         }
 
-        console.log(roomData)
-
         const container = document.getElementById('main-container')
         const roomContainer = document.getElementById('room-container')
 
@@ -73,7 +71,7 @@ const loadData = async () => {
             roomData.data,
             'room',
             true,
-            getButtons()
+            isUserTeacher() ? getButtons() : []
         )
 
         container?.insertBefore(element, roomContainer)
@@ -82,10 +80,31 @@ const loadData = async () => {
     }
 }
 
-;(() => {
+const loadAllStudents = async () => {
+    try {
+        const students = await fetchStudents()
+
+        if (!students.success) {
+            // todo: handle error
+            return
+        }
+    } catch (err) {
+        // todo: handle error
+    }
+}
+
+const loadSingleStudent = async () => {}
+
+;(async () => {
     if (!isUserLoggedIn()) {
         return redirect({ path: 'login'})
     }
 
-    loadData()
+    await loadRoomData()
+
+    if (isUserTeacher()) {
+        await loadAllStudents()
+    } else {
+        await loadSingleStudent()
+    }
 })()

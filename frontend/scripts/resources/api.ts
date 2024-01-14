@@ -1,10 +1,10 @@
 import { rooms, students } from './testData'
-import { Room, Student, Teacher, ResponseType } from './types'
+import { Room, Student, ResponseType, UserTeacher, UserStudent } from './types'
 
 const apiRoute = './api'
 
 // TODO: add better typing
-type LoginType = (params: BodyInit) => Promise<ResponseType<Student | Teacher>>
+type LoginType = (params: BodyInit) => Promise<ResponseType<UserStudent | UserTeacher>>
 export const login: LoginType = async (params) => {
     const response = await fetch(`${apiRoute}/login`, {
         method: 'POST',

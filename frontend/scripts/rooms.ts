@@ -1,17 +1,15 @@
 import { createExpandableRoomContainer } from './components/expandableRoomContainer'
-import { deleteRoom, fetchRooms } from './resources/api'
+import { createSocket } from './resources/socket'
 import { Room } from './resources/types'
 import createElement, { ElementDataType } from './utils/element'
 import { redirect } from './utils/redirect'
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user'
 
+const socket = createSocket()
+
 const handleDeleteRoom = async (roomId: string) => {
     try {
-        const response = await deleteRoom(roomId)
-
-        if (!response.success) {
-            // TODO: handle error
-        }
+        socket.emit({ event: 'deleteRoom', data: roomId })
     } catch (err) {
         // TODO: handle error
     }
@@ -72,6 +70,10 @@ const displayElements = (data: Room[]) => {
     const roomsContainer = document.getElementById('rooms-container')
     const footer = document.getElementById('footer')
 
+    if (roomsContainer?.children.length) {
+        roomsContainer.replaceChildren()
+    }
+
     data.forEach((roomData) => {
         const element = createExpandableRoomContainer(
             roomData,
@@ -83,7 +85,7 @@ const displayElements = (data: Room[]) => {
         roomsContainer?.appendChild(element)
     })
 
-    if (isUserTeacher()) {
+    if (isUserTeacher() && !footer?.children.length) {
         const addRoomButton = createElement({
             tagName: 'button',
             attributes: [
@@ -102,16 +104,38 @@ const displayElements = (data: Room[]) => {
     }
 }
 
+const updateDisplayedElements = (data: Room[]) => {
+    const roomsContainer = document.getElementById('rooms-container')
+
+    data.map((roomData) => {
+        const elementToUpdate = document.getElementById(`item-${roomData.id}`)
+        const updatedElement = createExpandableRoomContainer(
+            roomData,
+            'rooms',
+            false,
+            getButtons(roomData.id)
+        )
+
+        if (elementToUpdate) {
+            roomsContainer?.insertBefore(updatedElement, elementToUpdate)
+            roomsContainer?.removeChild(elementToUpdate)
+        } else {
+            roomsContainer?.appendChild(updatedElement)
+        }
+    })
+}
+
+
 const loadData = async () => {
     try {
-        const data = await fetchRooms()
+        socket.on('getRooms', (data: { data: Room[] }) => {
+            displayElements(data.data)
+        })
 
-        if (!data.success) {
-            // TODO: handle error
-            return
-        }
+        socket.on('updatedRoom', (data: { data: Room[] }) => {
+            updateDisplayedElements(data.data)
+        });
 
-        displayElements(data.data)
     } catch (err) {
         // TODO: handle error
     }

@@ -9,6 +9,14 @@ export type Room = {
     description: string
 }
 
+export type CreateRoom = Omit<Room, 'id'> & {
+    studentIds: string[]
+}
+
+export type UpdateRoom = Partial<Room> & {
+    studentIds?: string[]
+}
+
 type User = {
     id: string
     username: string
@@ -17,11 +25,11 @@ type User = {
     token: string
 }
 
-export type Student = User & {
+export type UserStudent = User & {
     type: 'student'
 }
 
-export type Teacher = User & {
+export type UserTeacher = User & {
     type: 'teacher'
 }
 
@@ -33,4 +41,11 @@ export type ResponseType<T> = {
     error: {
         message: string
     }
+}
+
+export type Student = {
+    id: string
+    name: string
+    facultyNumber: string
+    username: string
 }

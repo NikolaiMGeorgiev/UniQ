@@ -6,6 +6,6 @@ const onLogout = () => {
     redirect({ path: 'login' })
 }
 
-(() => (
+(() => {
     document.getElementById('logout')?.addEventListener('click', onLogout)
-))()
+})()

@@ -140,7 +140,7 @@ export const createExpandableRoomContainer = (
     roomData: Room,
     classPrefix: string,
     expanded: boolean,
-    buttons: ElementDataType[]
+    buttons?: ElementDataType[]
 ) => {
     const infoContainerElements = createInfoContainerElements(
         roomData,

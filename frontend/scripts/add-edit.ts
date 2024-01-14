@@ -1,9 +1,6 @@
-import {
-    createRoom,
-    fetchRoom,
-    fetchStudents,
-    updateRoom,
-} from './resources/api'
+import { fetchRoom, fetchStudents } from './resources/api'
+import { mapToCreateRoom } from './resources/mappers'
+import { createSocket } from './resources/socket'
 import { Room, Student } from './resources/types'
 import { onDrag, onDragOver, onDrop } from './utils/dragAndDrop'
 import createElement, { ElementDataType } from './utils/element'
@@ -14,6 +11,8 @@ import { redirect } from './utils/redirect'
 import { isFormElement, isInputElement } from './utils/typecheck'
 import { isUserLoggedIn, isUserStudent } from './utils/user'
 import { validate, validator } from './utils/validation'
+
+const socket = createSocket()
 
 const schema = {
     name: validator()
@@ -110,16 +109,11 @@ const onSubmit = async (event: Event) => {
     }
 
     const formData = new FormData(addEditForm)
-    formData.append('studentIds', JSON.stringify(getSelectedOptions()))
-
     const roomId = getRoomIdFromURL()
+    const roomData = mapToCreateRoom(formData, getSelectedOptions(), roomId)
 
     try {
-        if (roomId) {
-            await updateRoom(roomId, formData)
-        } else {
-            await createRoom(formData)
-        }
+        socket.emit({ event: 'updateRoom', data: roomData })
         redirect({ path: 'rooms' })
     } catch (err) {
         // TODO: handle error
