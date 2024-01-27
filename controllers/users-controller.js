@@ -1,4 +1,4 @@
-import { addUser, validateUser } from "../models/users-model.js";
+import { addUser, validateUser, getStudents } from "../models/users-model.js";
 import { handleResponse } from "../helpers/reqest-helper.js";
 
 class UserController {
@@ -14,6 +14,10 @@ class UserController {
         
         app.post('/login', async (req, res) => {
             await this.userHandler(req, res, validateUser);
+        });
+
+        app.get('/students', async (req, res) => {
+            await this.userHandler(req, res, getStudents);
         });
     }
 

@@ -1,16 +1,10 @@
-import { addRoom, editRoom, removeRoom, getRoomsByUser, getRoom } from "../models/rooms-model.js";
-import { getUserByToken, USER_TYPE } from "../models/users-model.js";
+import { addRoom, editRoom, removeRoom, getRoomsById, getRoomsByTeacher, getRoom } from "../models/rooms-model.js";
+import { getUserByToken, getUser, USER_TYPE } from "../models/users-model.js";
+import { addToShcedule, getScheduleByUser, removeSchedulesForRoom, getUserRoomSchedule, getScheduleByRoom, getStudentSchedulePosition } from "../models/schedule-model.js";
 import { handleResponse } from "../helpers/reqest-helper.js";
 import { ObjectId } from "mongodb";
-import { 
-    addToShcedule, 
-    getScheduleByUser, 
-    removeSchedulesForRoom, 
-    getUserRoomSchedule, 
-    getScheduleByRoom 
-} from "../models/schedule-model.js";
 
-const ID_DATABASE_COLUMNS = ["userId", "roomId"];
+const DATABASE_ID_COLUMNS = ["userId", "roomId"];
 
 class RoomsController {
     
@@ -23,7 +17,7 @@ class RoomsController {
             await this.roomGetRequestHandler(req, res, this.getRoomsData);
         });
 
-        app.get('/rooms/room/:roomId', async (req, res) => {
+        app.get('/rooms/:roomId', async (req, res) => {
             await this.roomGetRequestHandler(req, res, this.getRoomData);
         });
         
@@ -43,10 +37,29 @@ class RoomsController {
     
     async getRoomsData(userData) {
         const db = this.db;
-        if (userData.type == USER_TYPE.student) {
-            userData.schedule = await db.querySingle("schedule", userData.userId, getScheduleByUser);
+        let data = {};
+        if (userData.type == USER_TYPE.teacher) {
+            data = await db.querySingle("rooms", userData, getRoomsByTeacher);
+        } else {
+            const schedules = await db.querySingle("schedule", userData._id, getScheduleByUser);
+            const schedulesMap = schedules.reduce((acc, curr) => {
+                acc[curr.room_id] = curr;
+                return acc;
+            }, {});
+            const studentRooms = schedules.map(schedule => schedule.room_id);
+            data = await db.querySingle("rooms", studentRooms, getRoomsById);
+
+            for (let room of data) {
+                const scheduleData = {
+                    studentId: userData._id, 
+                    roomId: room._id
+                };
+                let studentPosition = await db.querySingle("schedule", scheduleData, getStudentSchedulePosition);
+                
+                room.studentStartTime = schedulesMap[room._id].startTime;
+                room.studentPosition = studentPosition;
+            }
         }
-        const data = await db.querySingle("rooms", userData, getRoomsByUser);
         return { data };
     }
 
@@ -73,7 +86,7 @@ class RoomsController {
     async roomGetRequestHandler(req, res, cb) {
         const reqestParams = Object.entries(req.params)
             .reduce((acc, curr) => {
-                acc[curr[0]] = ID_DATABASE_COLUMNS.indexOf(curr[0]) > -1 ? new ObjectId(curr[1]) : curr[1];
+                acc[curr[0]] = DATABASE_ID_COLUMNS.indexOf(curr[0]) > -1 ? new ObjectId(curr[1]) : curr[1];
                 return acc;
             }, {});
         const userToken = req.body.userToken;

@@ -1,19 +1,9 @@
 import { ObjectId } from "mongodb";
-import { getRoom, editRoom, ROOM_STATUSES, ROOM_TYPES } from "../models/rooms-model.js";
+import { getRemainingScheduleByRoom, getScheduleByUser, markAsFinished, updateStartTimeByRoom } from "../models/schedule-model.js";
 import { getUserByToken } from "../models/users-model.js";
+import { addToQueue, addUserLink, emptyQueueByRoom, getRoomQueue, removeFromRoomQueue } from "../models/queue-model.js";
+import { getRoom, editRoom, ROOM_STATUSES, ROOM_TYPES } from "../models/rooms-model.js";
 import { handleResponse } from "../helpers/reqest-helper.js";
-import { 
-    getRemainingScheduleByRoom, 
-    markAsFinished, 
-    updateStartTimeByRoom 
-} from "../models/schedule-model.js";
-import { 
-    addToQueue, 
-    addUserLink, 
-    emptyQueueByRoom, 
-    getRoomQueue, 
-    removeFromRoomQueue 
-} from "../models/queue-model.js";
 
 class QueueController {
 

@@ -1,4 +1,4 @@
-import { CONNECTION_STRING, DATABASE_NAME } from "../../config.js";
+import { CONNECTION_STRING, DATABASE_NAME } from "../config.js";
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
 class DatabaseHelper {
@@ -37,6 +37,20 @@ class DatabaseHelper {
         await this.client.close();
       }
     }
+
+    // async queryMutliple(data, callbacks) {
+    //     try {
+    //         await this.client.connect();
+    //         const database = this.client.db(DATABASE_NAME);
+    //         for (let i in callbacks) {
+    //             let callback = callbacks[i];
+    //             let callbackData = data[i];
+    //             await callback(database, callbackData);
+    //         }
+    //       } finally {
+    //         await this.client.close();
+    //       }
+    // }
 }
 
 export { DatabaseHelper };

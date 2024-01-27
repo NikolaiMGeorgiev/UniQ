@@ -23,6 +23,9 @@ const app = express();
 app.use(bodyParser);
 const db = new DatabaseHelper();
 
+// UserController.initEndpoints(app, db);
+// RoomsController.initEndpoints(app, db);
+// QueueController.initEndpoints(app, db);
 const userController = new UserController(db);
 const roomsController = new RoomsController(db);
 const queueController = new QueueController(db);

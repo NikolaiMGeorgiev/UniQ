@@ -16,6 +16,11 @@ async function getUserByToken(collection, userToken) {
     return user;
 }
 
+async function getStudents(collection) {
+    const students = await collection.find({ type: USER_TYPE.student }).toArray();
+    return students;
+}
+
 async function addUser(collection, userData) {
     let filteredUserData = filterUserData(userData);
     const existingUser = await collection.findOne({
@@ -56,6 +61,7 @@ function filterUserData(userData) {
 export {
     addUser,
     getUser,
+    getStudents,
     getUserByToken,
     validateUser,
     USER_TYPE

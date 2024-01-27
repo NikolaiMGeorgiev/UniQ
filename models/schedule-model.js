@@ -8,6 +8,15 @@ async function getScheduleByRoom(collection, roomId) {
     return await collection.find({ room_id: roomId }).toArray();
 }
 
+async function getStudentSchedulePosition(collection, data) {
+    const { studentId, roomId } = data;
+    const roomSchedule = await getScheduleByRoom(collection, roomId);
+    roomSchedule.sort((a, b) => {
+        return new Date(a.startTime) - new Date(b.startTime);
+    });
+    return roomSchedule.findIndex(schedule => schedule.studentId.toString() == studentId);
+}
+
 async function getRemainingScheduleByRoom(collection, roomId) {
     return await collection.find({ room_id: roomId, finished: 0 }).toArray();
 }
@@ -56,5 +65,6 @@ export {
     updateStartTimeByRoom,
     getUserRoomSchedule,
     markAsFinished,
-    getRemainingScheduleByRoom
+    getRemainingScheduleByRoom,
+    getStudentSchedulePosition
 }

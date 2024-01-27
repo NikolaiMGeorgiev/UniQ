@@ -14,24 +14,22 @@ const ROOM_DATA_FIELDS = [
     '_id', 'name', 'creatorId', 'startDate', 'type', 'turnDuration', 'description', 'users', 'status', 'lastUpdated'
 ];
 
-async function getRoomsByUser(collection, userData) {
-    let roomsData = [];
-    if (userData.type == USER_TYPE.student) {
-        for (let schedule of userData.schedule) {
-            let roomData = await collection.findOne({ _id: schedule.room_id });
-            if (roomData) {
-                roomData.startTime = schedule.startTime;
-                roomsData.push(roomData);
-            }
-        }
-    } else {
-        roomsData = await collection.find({ creatorId: userData._id }).toArray();
+async function getRoomsById(collection, roomIds) {
+    let rooms = [];
+    for (let roomId of roomIds) {
+        const roomData = await collection.findOne({ _id: roomId });
+        rooms.push(roomData);
     }
-    return roomsData;
+    return rooms;
+}
+
+async function getRoomsByTeacher(collection, teacherId) {
+    return await collection.find({ creatorId: teacherId }).toArray();
 }
 
 async function getRoom(collection, roomId) {
-    return await collection.findOne({ _id: roomId });
+    const roomData = await collection.findOne({ _id: roomId });
+    return formatRoomData(roomData);
 }
 
 async function addRoom(collection, roomData) {
@@ -66,11 +64,24 @@ function filterRoomData(roomData) {
     }, {});
 }
 
+function formatRoomData(roomData) {
+    let formatedData = {};
+    for (let fieled of Object.keys(roomData)) {
+        if (fieled == '_id') {
+            formatedData['id'] = roomData[fieled];
+        } else {
+            formatedData[fieled] = roomData[fieled];
+        }
+    }
+    return formatedData;
+}
+
 export {
     addRoom,
     editRoom,
     removeRoom,
-    getRoomsByUser,
+    getRoomsById,
+    getRoomsByTeacher,
     getRoom,
     ROOM_STATUSES,
     ROOM_TYPES
