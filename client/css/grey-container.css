@@ -1,0 +1,24 @@
+.grey-container {
+    padding: 1rem;
+    display: flex;
+    background-color: #d9d9d9;
+    max-height: 580px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 4px 0px #d9d9d9;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.grey-container-content {
+    overflow-y: scroll;
+}
+
+.grey-container-header {
+    color: #fff;
+    margin: 0 auto;
+}
+
+.grey-container-footer {
+    display: flex;
+    flex-direction: column;
+}

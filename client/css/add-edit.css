@@ -1,0 +1,59 @@
+.add-edit-room-container-footer {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.students-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: #fff;
+    overflow: auto;
+    min-height: 50px;
+    border-radius: 2px;
+}
+
+.students-options {
+    background-color: #d9d9d9;
+    padding: 0.5rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+.students-options-not-included {
+    background-color: #d9d9d9;
+    padding: 0.5rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    color: #606060;
+}
+
+.students-options-included {
+    background-color: #e6e6e6;
+    padding: 0.5rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.student-remove-button {
+    margin: 0 4px;
+    padding: 4px;
+    border: none;
+    background-color: #fff;
+    border-radius: 20px;
+    color: #ee7070;
+}
+
+.student-add-button {
+    margin: 0 4px;
+    padding: 4px;
+    border: none;
+    background-color: #fff;
+    border-radius: 20px;
+    color: #4d894f;
+}

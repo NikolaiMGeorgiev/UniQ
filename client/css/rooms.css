@@ -1,0 +1,101 @@
+.rooms-item {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 4px;
+    height: 94px;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.rooms-info-container {
+    display: grid;
+}
+
+.rooms-item-header {
+    display: flex;
+    gap: 1rem;
+}
+
+.rooms-title {
+    margin: 4px 0;
+    font-size: 1rem;
+}
+
+.rooms-status--active {
+    margin: 4px 0;
+    color: #4d894f;
+}
+
+.rooms-status--break {
+    margin: 4px 0;
+    color: #eea570;
+}
+
+.rooms-status--not-started {
+    margin: 4px 0;
+    color: #606060;
+}
+
+.rooms-status--closed {
+    margin: 4px 0;
+    color: #ee7070;
+}
+
+.rooms-description {
+    color: #666666;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin: 4px 0;
+}
+
+.rooms-expand-collapse-button {
+    padding: 0;
+    background: none;
+    border: none;
+    height: 30px;
+    color: #788bff;
+    border-radius: 2px;
+    text-align: start;
+}
+
+.rooms-schedule-info {
+    color: #666666;
+    font-size: 0.75rem;
+    margin: 4px 0;
+    display: none;
+    width: 100%;
+}
+
+.rooms-button-edit {
+    background: none;
+    border: none;
+    height: 30px;
+    color: #eea570;
+    border-radius: 2px;
+}
+
+.rooms-button-delete {
+    background: none;
+    border: none;
+    height: 30px;
+    color: #ee7070;
+    border-radius: 2px;
+}
+
+.rooms-button-join {
+    background: none;
+    border: none;
+    height: 30px;
+    color: #4d894f;
+    border-radius: 2px;
+}
+
+.rooms-buttons-container {
+    display: flex;
+    align-items: center;
+}
