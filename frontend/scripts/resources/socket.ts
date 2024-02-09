@@ -7,11 +7,14 @@ type EmitArgs = {
 } | {
     event: 'updateRoom',
     data: CreateRoom | UpdateRoom
+} | {
+    event: 'getRoomStudents',
+    data: string
 }
 
   
-export const createSocket = () => {
-    const socket = io(import.meta.env.VITE_SERVER_URL)
+export const createSocket = (query?: Record<string, any>) => {
+    const socket = io(import.meta.env.VITE_SERVER_URL, { query })
 
     return {
         emit: ({ event, data }: EmitArgs) => socket.emit(event, data),

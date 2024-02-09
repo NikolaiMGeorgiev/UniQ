@@ -82,3 +82,53 @@
     display: flex;
     align-items: center;
 }
+
+.students-item {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 4px;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.students-title {
+    margin: 4px 0;
+    font-size: 1rem;
+}
+
+.students-status--active {
+    margin: 4px 0;
+    color: #4d894f;
+}
+
+.students-status--inactive {
+    margin: 4px 0;
+    color: #606060;
+}
+
+.students-status--finished {
+    margin: 4px 0;
+    color: #eea570;
+}
+
+.students-status--in-exam {
+    margin: 4px 0;
+    color: #788bff;
+}
+
+.students-item-header {
+    display: flex;
+    gap: 1rem;
+}
+
+.students-faculty-number {
+    color: #666666;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin: 4px 0;
+}

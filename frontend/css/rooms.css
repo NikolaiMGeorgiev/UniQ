@@ -10,6 +10,16 @@
     justify-content: space-between;
 }
 
+.rooms-container {
+    height: 600px;
+}
+
+@media (max-width: 490px) {
+    .rooms-container {
+        height: 80vh;
+    }
+}
+
 .rooms-info-container {
     display: grid;
 }

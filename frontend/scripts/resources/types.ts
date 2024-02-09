@@ -46,6 +46,10 @@ export type ResponseType<T> = {
 export type Student = {
     id: string
     name: string
-    facultyNumber: string
+    fn: string
     username: string
+}
+
+export type RoomStudent = Student & {
+    status: 'active' | 'inactive' | 'finished' | 'in-exam'
 }

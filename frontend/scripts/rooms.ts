@@ -125,7 +125,6 @@ const updateDisplayedElements = (data: Room[]) => {
     })
 }
 
-
 const loadData = async () => {
     try {
         socket.on('getRooms', (data: { data: Room[] }) => {

@@ -1,11 +1,16 @@
 import { createExpandableRoomContainer } from './components/expandableRoomContainer'
-import { fetchRoom, fetchStudents } from './resources/api'
+import { createStudentContainer } from './components/studentContainer'
+import { fetchRoom } from './resources/api'
+import { createSocket } from './resources/socket'
+import { RoomStudent } from './resources/types'
 import { ElementDataType } from './utils/element'
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL'
 import { redirect } from './utils/redirect'
 import { isUserLoggedIn, isUserTeacher } from './utils/user'
 
-const getButtons = () => {
+const socket = createSocket({ accessToken: localStorage.getItem('accessToken'), roomId: getRoomIdFromURL()})
+
+const getRoomButtons = () => {
     const breakButton: ElementDataType = {
         tagName: 'button',
         attributes: [
@@ -30,6 +35,37 @@ const getButtons = () => {
         properties: [{ name: 'innerHTML', value: 'End' }],
         eventListeners: [
             { event: 'click', listener: () => console.log('@@@ End clicked') },
+        ],
+    }
+
+    return [breakButton, endButton]
+}
+
+const getStudentButtons = () => {
+    const breakButton: ElementDataType = {
+        tagName: 'button',
+        attributes: [
+            { name: 'class', value: 'room-button-break' },
+            { name: 'id', value: 'button-break' },
+        ],
+        properties: [{ name: 'innerHTML', value: 'Let in' }],
+        eventListeners: [
+            {
+                event: 'click',
+                listener: () => console.log('@@@ Let in clicked'),
+            },
+        ],
+    }
+
+    const endButton: ElementDataType = {
+        tagName: 'button',
+        attributes: [
+            { name: 'class', value: 'room-button-end' },
+            { name: 'id', value: 'button-end' },
+        ],
+        properties: [{ name: 'innerHTML', value: 'Kick out' }],
+        eventListeners: [
+            { event: 'click', listener: () => console.log('@@@ Kick out clicked') },
         ],
     }
 
@@ -71,7 +107,7 @@ const loadRoomData = async () => {
             roomData.data,
             'room',
             true,
-            isUserTeacher() ? getButtons() : []
+            isUserTeacher() ? getRoomButtons() : []
         )
 
         container?.insertBefore(element, roomContainer)
@@ -81,16 +117,36 @@ const loadRoomData = async () => {
 }
 
 const loadAllStudents = async () => {
-    try {
-        const students = await fetchStudents()
+    const roomId = getRoomIdFromURL()
 
-        if (!students.success) {
-            // todo: handle error
-            return
-        }
+    try {
+
+        socket.emit({ event: 'getRoomStudents', data: roomId })
+
+        socket.on('roomStudents', (data: { data: RoomStudent[] }) => {
+            displayStudents(data.data)
+        })
     } catch (err) {
         // todo: handle error
     }
+}
+
+const displayStudents = (data: RoomStudent[]) => {
+    const roomsContainer = document.getElementById('room-container')
+
+    if (roomsContainer?.children.length) {
+        roomsContainer.replaceChildren()
+    }
+
+    data.forEach((studentData) => {
+        const element = createStudentContainer(
+            studentData,
+            'students',
+            getStudentButtons()
+        )
+
+        roomsContainer?.appendChild(element)
+    })
 }
 
 const loadSingleStudent = async () => {}
