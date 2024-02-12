@@ -1,9 +1,9 @@
-import { createExpandableRoomContainer } from './components/expandableRoomContainer'
-import { fetchRoom, fetchStudents } from './resources/api'
-import { ElementDataType } from './utils/element'
-import { getRoomIdFromURL } from './utils/getRoomIdFromURL'
-import { redirect } from './utils/redirect'
-import { isUserLoggedIn, isUserTeacher } from './utils/user'
+import { createExpandableRoomContainer } from './components/expandableRoomContainer.js'
+import { fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
+import { ElementDataType } from './utils/element.js'
+import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js'
+import { redirect } from './utils/redirect.js'
+import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js'
 
 const getButtons = () => {
     const breakButton: ElementDataType = {
@@ -58,8 +58,11 @@ const loadRoomData = async () => {
         }
 
         if (
-            roomData.data.status === 'closed' ||
-            roomData.data.status === 'not-started'
+            isUserStudent() &&
+            (
+                roomData.data.status === 'closed' ||
+                roomData.data.status === 'not-started'
+            )
         ) {
             return redirect({ path: 'rooms' })
         }
@@ -100,11 +103,16 @@ const loadSingleStudent = async () => {}
         return redirect({ path: 'login'})
     }
 
-    await loadRoomData()
-
     if (isUserTeacher()) {
         await loadAllStudents()
+        const roomId = getRoomIdFromURL()
+        if (!roomId) {
+            return redirect({ path: 'rooms' })
+        }
+        await updateRoom(roomId, JSON.stringify({ status: "started" }))
     } else {
         await loadSingleStudent()
     }
+
+    await loadRoomData()
 })()

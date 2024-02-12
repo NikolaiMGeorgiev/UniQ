@@ -1,26 +1,22 @@
-import { createExpandableRoomContainer } from './components/expandableRoomContainer.js'
-import { deleteRoom, getRooms } from './resources/api.js'
-import { createSocket } from './resources/socket.js'
-import { Room } from './resources/types.js'
-import createElement, { ElementDataType } from './utils/element.js'
-import { redirect } from './utils/redirect.js'
-import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js'
-
-
-const socket = createSocket()
-
-const handleDeleteRoom = async (roomId: string) => {
+import { createExpandableRoomContainer } from './components/expandableRoomContainer.js';
+import { deleteRoom, getRooms } from './resources/api.js';
+import { createSocket } from './resources/socket.js';
+import createElement from './utils/element.js';
+import { redirect } from './utils/redirect.js';
+import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js';
+const socket = createSocket();
+const handleDeleteRoom = async (roomId) => {
     try {
-        deleteRoom(roomId)
-        document.querySelector(`#item-${roomId}`)?.remove()
+        deleteRoom(roomId);
+        document.querySelector(`#item-${roomId}`)?.remove();
         // socket.emit({ event: 'deleteRoom', data: roomId })
-    } catch (err) {
+    }
+    catch (err) {
         // TODO: handle error
     }
-}
-
-const getButtons = (roomId: string) => {
-    const joinButton: ElementDataType = {
+};
+const getButtons = (roomId) => {
+    const joinButton = {
         tagName: 'button',
         attributes: [
             { name: 'class', value: 'rooms-button-join' },
@@ -33,9 +29,8 @@ const getButtons = (roomId: string) => {
                 listener: () => redirect({ path: 'room', id: roomId }),
             },
         ],
-    }
-
-    const editButton: ElementDataType = {
+    };
+    const editButton = {
         tagName: 'button',
         attributes: [
             { name: 'class', value: 'rooms-button-edit' },
@@ -48,9 +43,8 @@ const getButtons = (roomId: string) => {
                 listener: () => redirect({ path: 'add-edit', id: roomId }),
             },
         ],
-    }
-
-    const deleteButton: ElementDataType = {
+    };
+    const deleteButton = {
         tagName: 'button',
         attributes: [
             { name: 'class', value: 'rooms-button-delete' },
@@ -61,34 +55,23 @@ const getButtons = (roomId: string) => {
             {
                 event: 'click',
                 listener: async () => {
-                    await handleDeleteRoom(roomId)
+                    await handleDeleteRoom(roomId);
                 },
             },
         ],
-    }
-
-    return isUserStudent() ? [joinButton] : [joinButton, editButton, deleteButton]
-}
-
-const displayElements = (data: Room[]) => {
-    const roomsContainer = document.getElementById('rooms-container')
-    const footer = document.getElementById('footer')
-
+    };
+    return isUserStudent() ? [joinButton] : [joinButton, editButton, deleteButton];
+};
+const displayElements = (data) => {
+    const roomsContainer = document.getElementById('rooms-container');
+    const footer = document.getElementById('footer');
     if (roomsContainer?.children.length) {
-        roomsContainer.replaceChildren()
+        roomsContainer.replaceChildren();
     }
-
     data.forEach((roomData) => {
-        const element = createExpandableRoomContainer(
-            roomData,
-            'rooms',
-            false,
-            getButtons(roomData.id)
-        )
-
-        roomsContainer?.appendChild(element)
-    })
-
+        const element = createExpandableRoomContainer(roomData, 'rooms', false, getButtons(roomData.id));
+        roomsContainer?.appendChild(element);
+    });
     if (isUserTeacher() && !footer?.children.length) {
         const addRoomButton = createElement({
             tagName: 'button',
@@ -100,36 +83,26 @@ const displayElements = (data: Room[]) => {
                 { name: 'innerHTML', value: 'Add room' },
             ],
             eventListeners: [
-                { event: 'click', listener: () => redirect({ path: 'add-edit' })}
+                { event: 'click', listener: () => redirect({ path: 'add-edit' }) }
             ]
-        })
-
-        footer?.appendChild(addRoomButton)
+        });
+        footer?.appendChild(addRoomButton);
     }
-}
-
-const updateDisplayedElements = (data: Room[]) => {
-    const roomsContainer = document.getElementById('rooms-container')
-
+};
+const updateDisplayedElements = (data) => {
+    const roomsContainer = document.getElementById('rooms-container');
     data.map((roomData) => {
-        const elementToUpdate = document.getElementById(`item-${roomData.id}`)
-        const updatedElement = createExpandableRoomContainer(
-            roomData,
-            'rooms',
-            false,
-            getButtons(roomData.id)
-        )
-
+        const elementToUpdate = document.getElementById(`item-${roomData.id}`);
+        const updatedElement = createExpandableRoomContainer(roomData, 'rooms', false, getButtons(roomData.id));
         if (elementToUpdate) {
-            roomsContainer?.insertBefore(updatedElement, elementToUpdate)
-            roomsContainer?.removeChild(elementToUpdate)
-        } else {
-            roomsContainer?.appendChild(updatedElement)
+            roomsContainer?.insertBefore(updatedElement, elementToUpdate);
+            roomsContainer?.removeChild(elementToUpdate);
         }
-    })
-}
-
-
+        else {
+            roomsContainer?.appendChild(updatedElement);
+        }
+    });
+};
 const loadData = async () => {
     try {
         const roomsData = await getRooms();
@@ -139,20 +112,17 @@ const loadData = async () => {
         // socket.on('getRooms', (data: { data: Room[] }) => {
         //     displayElements(data.data)
         // })
-
         // socket.on('updatedRoom', (data: { data: Room[] }) => {
         //     updateDisplayedElements(data.data)
         // });
-
-    } catch (err) {
+    }
+    catch (err) {
         // TODO: handle error
     }
-}
-
-;(() => {
+};
+(() => {
     if (!isUserLoggedIn()) {
-        return redirect({ path: 'login'})
+        return redirect({ path: 'login' });
     }
-
-    loadData()
-})()
+    loadData();
+})();

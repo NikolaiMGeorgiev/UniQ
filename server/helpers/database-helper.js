@@ -1,4 +1,4 @@
-import { CONNECTION_STRING, DATABASE_NAME } from "../config.js";
+import { CONNECTION_STRING, DATABASE_NAME } from "../../config.js";
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
 class DatabaseHelper {
@@ -24,19 +24,19 @@ class DatabaseHelper {
         }
     }
 
-    async queryJoin(collectionName, match, joinBy) {
-      try {
-        await this.client.connect();
-        const database = this.client.db(DATABASE_NAME);
-        const collection = database.collection(collectionName);
-        return await collection.aggregate([
-          { $match: match },
-          { $lookup: joinBy }
-        ]).toArray();
-      } finally {
-        await this.client.close();
-      }
-    }
+    // async queryJoin(collectionName, match, joinBy) {
+    //   try {
+    //     await this.client.connect();
+    //     const database = this.client.db(DATABASE_NAME);
+    //     const collection = database.collection(collectionName);
+    //     return await collection.aggregate([
+    //       { $match: match },
+    //       { $lookup: joinBy }
+    //     ]).toArray();
+    //   } finally {
+    //     await this.client.close();
+    //   }
+    // }
 
     // async queryMutliple(data, callbacks) {
     //     try {

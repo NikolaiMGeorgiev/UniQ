@@ -1,18 +1,17 @@
-import { fetchRoom, fetchStudents } from './resources/api'
-import { mapToCreateRoom } from './resources/mappers'
-import { createSocket } from './resources/socket'
-import { Room, Student } from './resources/types'
-import { onDrag, onDragOver, onDrop } from './utils/dragAndDrop'
-import createElement, { ElementDataType } from './utils/element'
-import { clearError } from './utils/form'
-import { getRoomIdFromURL } from './utils/getRoomIdFromURL'
-import { getSelectedOptions } from './utils/getSelectedStudentIds'
-import { redirect } from './utils/redirect'
-import { isFormElement, isInputElement } from './utils/typecheck'
-import { isUserLoggedIn, isUserStudent } from './utils/user'
-import { validate, validator } from './utils/validation'
+import { createRoom, fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
+import { mapToCreateRoom } from './resources/mappers.js'
+import { Room, Student } from './resources/types.js'
+import { onDrag, onDragOver, onDrop } from './utils/dragAndDrop.js'
+import createElement, { ElementDataType } from './utils/element.js'
+import { clearError, prepareFormData } from './utils/form.js'
+import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js'
+import { getSelectedOptions } from './utils/getSelectedStudentIds.js'
+import { redirect } from './utils/redirect.js'
+import { isFormElement, isInputElement } from './utils/typecheck.js'
+import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js'
+import { validate, validator } from './utils/validation.js'
 
-const socket = createSocket()
+// const socket = createSocket()
 
 const schema = {
     name: validator()
@@ -112,9 +111,29 @@ const onSubmit = async (event: Event) => {
     const roomId = getRoomIdFromURL()
     const roomData = mapToCreateRoom(formData, getSelectedOptions(), roomId)
 
+    //TODO separate edit and create
+    // if (!roomId) {
+    //     redirect({ path: 'rooms' })
+    //     return
+    // }
+
     try {
-        socket.emit({ event: 'updateRoom', data: roomData })
-        redirect({ path: 'rooms' })
+        //TODO separate edit and create
+        // const result = await updateRoom(roomId, roomData)
+        let studentSchedule: Array<string> = []
+        document.querySelectorAll('[name="included"]').forEach((studentNode) => {
+            const studetnId = studentNode.getAttribute('value')
+            if (studetnId) {
+                studentSchedule.push(studetnId)
+            }
+        });
+
+        let roomFormData = new FormData(addEditForm)
+        roomFormData.append("students", studentSchedule.join(','))
+        const formData = prepareFormData(roomFormData)
+        const result = await createRoom(formData)
+        // socket.emit({ event: 'updateRoom', data: roomData })
+        // redirect({ path: 'rooms' })
     } catch (err) {
         // TODO: handle error
     }
@@ -208,7 +227,7 @@ const fillInInitialFormValues = (roomData: Room) => {
 
     const startTime = document.getElementById('startTime')
     if (startTime && isInputElement(startTime)) {
-        startTime.value = roomData.startDate
+        startTime.value = roomData.startTime
     }
 
     document.getElementById(roomData.type)?.setAttribute('checked', 'true')
@@ -251,18 +270,19 @@ const loadData = async () => {
             return
         }
 
-        if (!roomData.data) {
+        if (!roomData.data || !roomData.data) {
             return redirect({ path: 'rooms' })
         }
 
         if (
-            roomData.data.status === 'closed' ||
-            roomData.data.status === 'not-started'
+            isUserStudent() &&
+            (
+                roomData.data.status === 'closed' ||
+                roomData.data.status === 'not-started'
+            )
         ) {
             return redirect({ path: 'rooms' })
         }
-
-        console.log(roomData)
 
         fillInInitialFormValues(roomData.data)
     } catch (err) {

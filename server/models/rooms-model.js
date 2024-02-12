@@ -1,5 +1,4 @@
 import { ObjectId } from "mongodb";
-import { USER_TYPE } from "./users-model.js";
 
 const ROOM_STATUSES = {
     inactive: 0,
@@ -11,13 +10,14 @@ const ROOM_TYPES = {
     scheduled: 2
 };
 const ROOM_DATA_FIELDS = [
-    '_id', 'name', 'creatorId', 'startDate', 'type', 'turnDuration', 'description', 'users', 'status', 'lastUpdated'
+    '_id', 'name', 'creatorId', 'startTime', 'type', 'turnDuration', 'description', 'users', 'status', 'lastUpdated'
 ];
 
 async function getRoomsById(collection, roomIds) {
     let rooms = [];
     for (let roomId of roomIds) {
         const roomData = await collection.findOne({ _id: roomId });
+        roomData.id = roomData._id;
         rooms.push(roomData);
     }
     return rooms;
@@ -28,20 +28,19 @@ async function getRoomsByTeacher(collection, teacherId) {
 }
 
 async function getRoom(collection, roomId) {
-    const roomData = await collection.findOne({ _id: roomId });
-    return formatRoomData(roomData);
+    return await collection.findOne({ _id: roomId });
 }
 
 async function addRoom(collection, roomData) {
     roomData = filterRoomData(roomData);
-    roomData.status = 0;
     if (!roomData.description) {
         roomData.description = "";
     }
+    roomData.status = 'not-started';
     roomData.creatorId = new ObjectId(roomData.creatorId);
-    roomData.lastUpdated = null;
-    await collection.insertOne(roomData);
-    return { status: 200 };
+    roomData.lastUpdated = 0;
+    const result = await collection.insertOne(roomData);
+    return { status: 200, roomId: result.insertedId };
 }
 
 async function editRoom(collection, roomData) {
@@ -50,8 +49,8 @@ async function editRoom(collection, roomData) {
     return result.matchedCount === 1 ? { status: 200 } : { status: 404, message: "No such room found" };
 }
 
-async function removeRoom(collection, roomData) {
-    const result = await collection.deleteOne({ _id: roomData._id });
+async function removeRoom(collection, roomId) {
+    const result = await collection.deleteOne({ _id: roomId });
     return result.deletedCount === 1 ? { status: 200 } : { status: 404, message: "No such room found" };
 }
 
@@ -62,18 +61,6 @@ function filterRoomData(roomData) {
         }
         return acc;
     }, {});
-}
-
-function formatRoomData(roomData) {
-    let formatedData = {};
-    for (let fieled of Object.keys(roomData)) {
-        if (fieled == '_id') {
-            formatedData['id'] = roomData[fieled];
-        } else {
-            formatedData[fieled] = roomData[fieled];
-        }
-    }
-    return formatedData;
 }
 
 export {

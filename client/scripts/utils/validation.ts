@@ -1,6 +1,6 @@
-import { addError } from './form'
-import { getSelectedOptions } from './getSelectedStudentIds'
-import { isInputElement } from './typecheck'
+import { addError } from './form.js'
+import { getSelectedOptions } from './getSelectedStudentIds.js'
+import { isInputElement } from './typecheck.js'
 
 export const validator = function () {
     let type = 'string'
@@ -152,8 +152,9 @@ export const validate = (schema: Record<string, any>) => {
             ? getRadioInputValue(field)
             : getFieldValue(field)
 
+        // TODO remove after testing
         const errorMessage = fieldValidator.test(fieldValue)
-        if (errorMessage) {
+        if (errorMessage && key != "type") {
             valid = false
             const errorFieldName = Array.isArray(field) ? `${key}-wrapper` : key
             addError(errorFieldName, errorMessage)

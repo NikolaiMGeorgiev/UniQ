@@ -1,5 +1,5 @@
-import { redirect } from "./utils/redirect"
-import { isUserLoggedIn } from "./utils/user"
+import { redirect } from "./utils/redirect.js"
+import { isUserLoggedIn } from "./utils/user.js"
 
 (() => {
     if (isUserLoggedIn()) {

@@ -1,11 +1,11 @@
-import { register } from './resources/api'
-import { DEFAULT_ERROR_MESSAGE } from './resources/constants'
-import { clearError } from './utils/form'
-import { clearMessage, showMessage } from './utils/messages'
-import { redirect } from './utils/redirect'
-import { isFormElement } from './utils/typecheck'
-import { isUserLoggedIn } from './utils/user'
-import { validate, validator } from './utils/validation'
+import { register } from './resources/api.js'
+import { DEFAULT_ERROR_MESSAGE } from './resources/constants.js'
+import { clearError, prepareFormData } from './utils/form.js'
+import { clearMessage, showMessage } from './utils/messages.js'
+import { redirect } from './utils/redirect.js'
+import { isFormElement } from './utils/typecheck.js'
+import { isUserLoggedIn } from './utils/user.js'
+import { validate, validator } from './utils/validation.js'
 
 const schema = {
     password: validator()
@@ -39,7 +39,8 @@ const onRegister = async (event: SubmitEvent) => {
     }
 
     try {
-        const response = await register(new FormData(loginForm))
+        const formData = prepareFormData(new FormData(loginForm))
+        const response = await register(formData)
 
         if (response.success) {
             redirect({ path: 'login' })
@@ -51,6 +52,7 @@ const onRegister = async (event: SubmitEvent) => {
             showMessage('error-message', response.error?.message)
         }
     } catch (err) {
+        console.error(err)
         showMessage('error-message', DEFAULT_ERROR_MESSAGE)
     }
 }

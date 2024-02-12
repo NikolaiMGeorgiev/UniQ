@@ -1,5 +1,7 @@
-import { addUser, validateUser, getStudents } from "../models/users-model.js";
+import { addUser, validateUser, getStudents, getUserByEmail } from "../models/users-model.js";
 import { handleResponse } from "../helpers/reqest-helper.js";
+import { JWT_SECRET } from './../../config.js';
+import jwt from 'jsonwebtoken';
 
 class UserController {
     
@@ -9,22 +11,36 @@ class UserController {
 
     async initEndpoints(app) {
         app.post('/register', async (req, res) => {
-            await this.userHandler(req, res, addUser);
+            const userData = req.body;
+
+            let result = await this.db.querySingle("users", userData.email, getUserByEmail);
+            if (result) {
+                return handleResponse(res, { status: 409 });
+            }
+            
+            result = await this.db.querySingle("users", userData, addUser);
+            handleResponse(res, result);
         });
         
         app.post('/login', async (req, res) => {
-            await this.userHandler(req, res, validateUser);
+            const userData = req.body;
+            const result = await this.db.querySingle("users", userData, validateUser);
+
+            if (!result || result.status != 200) {
+                handleResponse(res, result);
+                return;
+            }
+
+            var token = jwt.sign({ id: result.data._id }, JWT_SECRET);
+            result.data.token = token;
+            handleResponse(res, result);
         });
 
         app.get('/students', async (req, res) => {
-            await this.userHandler(req, res, getStudents);
+            const userData = req.body;
+            const result = await this.db.querySingle("users", userData, getStudents);
+            handleResponse(res, result);
         });
-    }
-
-    async userHandler(req, res, cb) {
-        const userData = req.body;
-        const result = await this.db.querySingle("users", userData, cb);
-        handleResponse(res, result);
     }
 }
 

@@ -1,4 +1,4 @@
-import { redirect } from "./utils/redirect"
+import { redirect } from "./utils/redirect.js"
 
 const onLogout = () => {
     localStorage.removeItem('accessToken')

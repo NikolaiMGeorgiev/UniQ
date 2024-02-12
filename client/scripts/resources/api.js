@@ -1,131 +1,98 @@
-import { Room, Student, ResponseType, UserTeacher, UserStudent } from './types.js'
-
-const apiRoute = 'http://localhost:8080'
+const apiRoute = 'http://localhost:8080';
 const token = localStorage.getItem("accessToken");
-
-// TODO: add better typing
-type LoginType = (params: BodyInit) => Promise<ResponseType<UserStudent | UserTeacher>>
-export const login: LoginType = async (params) => {
+export const login = async (params) => {
     const response = await fetch(`${apiRoute}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: params,
         mode: 'cors',
-    })
-
-    return response.json()
-}
-
-type RegisterType = (params: BodyInit) => Promise<ResponseType<null>>
-export const register: RegisterType = async (params) => {
+    });
+    return response.json();
+};
+export const register = async (params) => {
     const response = await fetch(`${apiRoute}/register`, {
         method: 'POST',
         body: params,
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
-    })
-
-    return await response.json()
-}
-
-type GetRooms = () => Promise<ResponseType<Room[]>>
-export const getRooms: GetRooms = async () => {
+    });
+    return await response.json();
+};
+export const getRooms = async () => {
     const response = await fetch(`${apiRoute}/api/rooms`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` },
         mode: 'cors'
     });
-
     const responseParsed = await response.json();
     return {
         success: true,
         error: null,
         data: responseParsed.data
-    }
-}
-
-type FetchRoomsType = () => Promise<ResponseType<Room[]>>
-export const fetchRooms: FetchRoomsType = async () => {
+    };
+};
+export const fetchRooms = async () => {
     // const response = await fetch(`${apiRoute}/rooms`, {
     //     method: 'GET',
     //     mode: 'cors'
     // })
-
     // return response.json();
     return {
         success: true,
         error: null,
-        data: []//rooms
-    }
-}
-
-type FetchRoomType = (id: string) => Promise<ResponseType<Room | undefined>>
-export const fetchRoom: FetchRoomType = async (id) => {
+        // data: rooms,
+        data: []
+    };
+};
+export const fetchRoom = async (id) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` },
         mode: 'cors'
-    })
-
+    });
     const responseParsed = await response.json();
     return {
         success: true,
         error: null,
         data: responseParsed.data.roomData,
         schedule: responseParsed.data.schedule
-    }
-}
-
-type CreateRoomType = (roomData: BodyInit) => Promise<ResponseType<null>>
-export const createRoom: CreateRoomType = async (roomData) => {
+    };
+};
+export const createRoom = async (roomData) => {
     const response = await fetch(`${apiRoute}/api/rooms`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'  },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         mode: 'cors',
         body: roomData,
-    })
-
-    return response.json()
-}
-
-type UpdateRoomType = (
-    id: string,
-    roomData: BodyInit
-) => Promise<ResponseType<null>>
-export const updateRoom: UpdateRoomType = async (id, roomData) => {
+    });
+    return response.json();
+};
+export const updateRoom = async (id, roomData) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {
         method: 'PUT',
         mode: 'cors',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'  },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: roomData,
-    })
-
-    return response.json()
-}
-
-type DeleteRoomType = (id: string) => Promise<ResponseType<null>>
-export const deleteRoom: DeleteRoomType = async (id) => {
+    });
+    return response.json();
+};
+export const deleteRoom = async (id) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
         mode: 'cors',
-    })
-
-    return response.json()
-}
-
-type FetchStudentsType = () => Promise<ResponseType<Student[]>>
-export const fetchStudents: FetchStudentsType = async () => {
+    });
+    return response.json();
+};
+export const fetchStudents = async () => {
     const response = await fetch(`${apiRoute}/students`, {
         method: 'GET',
         mode: 'cors'
-    })
-
+    });
     const responseParsed = await response.json();
-
     return {
         success: true,
         error: null,
         data: responseParsed.data,
-    }
-}
+    };
+};

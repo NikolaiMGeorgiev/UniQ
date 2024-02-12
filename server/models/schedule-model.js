@@ -28,11 +28,13 @@ async function getUserRoomSchedule(collection, data) {
 
 async function addToShcedule(collection, roomData) {
     let scheduleData = [];
-    for (let student of roomData.students) {
+    const students = roomData.students
+    for (let position in students) {
+        const student = students[position];
         scheduleData.push({
             room_id: roomData._id,
-            studentId: new ObjectId(student._id),
-            startTime: student.startTime ? student.startTime : null,
+            studentId: new ObjectId(student.id),
+            position: position,
             finished: 0
         });
     }
@@ -46,8 +48,8 @@ async function markAsFinished(collection, data) {
     );
 }
 
-async function removeSchedulesForRoom(collection, roomData) {
-    return await collection.deleteMany({ room_id: roomData._id });
+async function removeSchedulesForRoom(collection, roomId) {
+    return await collection.deleteMany({ room_id: roomId });
 }
 
 async function updateStartTimeByRoom(collection, data) {

@@ -1,5 +1,5 @@
-import { Room } from '../resources/types'
-import createElement, { ElementDataType } from '../utils/element'
+import { Room } from '../resources/types.js'
+import createElement, { ElementDataType } from '../utils/element.js'
 
 const createInfoContainerElements = (
     roomData: Room,
@@ -59,7 +59,7 @@ const createInfoContainerElements = (
             { name: 'id', value: `start-time-${roomData.id}` },
         ],
         properties: [
-            { name: 'innerHTML', value: `Start time: ${roomData.startDate}` },
+            { name: 'innerHTML', value: `Start time: ${roomData.startTime}` },
         ],
     }
 

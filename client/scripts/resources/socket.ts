@@ -1,4 +1,4 @@
-import { io } from 'socket.io-client'
+// import { io } from 'socket.io-client'
 import { CreateRoom, UpdateRoom } from './types'
 
 type EmitArgs = {
@@ -11,7 +11,7 @@ type EmitArgs = {
 
   
 export const createSocket = () => {
-    const socket = io(import.meta.env.VITE_SERVER_URL)
+    const socket = io('http://localhost:8080/');
 
     return {
         emit: ({ event, data }: EmitArgs) => socket.emit(event, data),

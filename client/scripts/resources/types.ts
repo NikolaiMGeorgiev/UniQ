@@ -2,7 +2,7 @@ export type Room = {
     id: string
     name: string
     creatorId: string
-    startDate: string
+    startTime: string
     type: 'schedule' | 'queue'
     status: 'not-started' | 'active' | 'break' | 'closed'
     turnDuration: number
@@ -26,11 +26,11 @@ type User = {
 }
 
 export type UserStudent = User & {
-    type: 'student'
+    role: 'student'
 }
 
 export type UserTeacher = User & {
-    type: 'teacher'
+    role: 'teacher'
 }
 
 export type ResponseType<T> = {
