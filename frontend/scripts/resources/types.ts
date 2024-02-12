@@ -52,4 +52,6 @@ export type Student = {
 
 export type RoomStudent = Student & {
     status: 'active' | 'inactive' | 'finished' | 'in-exam'
+    approximateTimeUntilExam: number
+    examResource?: string
 }

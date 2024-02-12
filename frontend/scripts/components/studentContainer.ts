@@ -31,7 +31,7 @@ const createInfoContainerElements = (
         attributes: [
             {
                 name: 'class',
-                value: `${classPrefix}-status--${student.status}`,
+                value: `${classPrefix}-status ${classPrefix}-status--${student.status}`,
             },
         ],
         properties: [{ name: 'innerHTML', value: getStudentStatus(student.status) }],
@@ -52,10 +52,20 @@ const createInfoContainerElements = (
         properties: [{ name: 'innerHTML', value: `Faculty number: ${student.fn}` }],
     }
 
+    const timeElement: ElementDataType = {
+        tagName: 'span',
+        attributes: [
+            { name: 'class', value: `${classPrefix}-faculty-number` },
+            { name: 'id', value: `facultyNumber-${student.approximateTimeUntilExam}` },
+        ],
+        properties: [{ name: 'innerHTML', value: ` Time until turn: ${student.approximateTimeUntilExam}` }],
+    }
+
 
     return [
         headerElement,
-        fnElement
+        fnElement,
+        timeElement
     ]
 }
 

@@ -10,6 +10,9 @@ type EmitArgs = {
 } | {
     event: 'getRoomStudents',
     data: string
+} | {
+    event: 'getRoomStudent',
+    data: string
 }
 
   

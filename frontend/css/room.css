@@ -83,6 +83,10 @@
     align-items: center;
 }
 
+.students-info-container {
+    display: grid;
+}
+
 .students-item {
     margin: 0.5rem 0;
     padding: 0.5rem;
@@ -99,23 +103,23 @@
     font-size: 1rem;
 }
 
-.students-status--active {
+.students-status {
     margin: 4px 0;
+}
+
+.students-status--active {
     color: #4d894f;
 }
 
 .students-status--inactive {
-    margin: 4px 0;
     color: #606060;
 }
 
 .students-status--finished {
-    margin: 4px 0;
     color: #eea570;
 }
 
 .students-status--in-exam {
-    margin: 4px 0;
     color: #788bff;
 }
 

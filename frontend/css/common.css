@@ -91,6 +91,14 @@ a:active {
     margin: 1rem 0 0;
 }
 
+.button-success {
+    background: none;
+    border: none;
+    height: 30px;
+    color: #4d894f;
+    border-radius: 2px;
+}
+
 .main-container {
     width: 650px;
     margin: 2rem auto;
@@ -107,4 +115,25 @@ a:active {
         width: auto;
         margin: 2rem 1rem;
     }
+}
+
+.error-alert {
+    width: 100px;
+    height: 80px;
+    background-color: #ee7070;
+    padding: 1rem;
+    border-radius: 2px;
+    animation: cssAnimation 3s forwards;
+    position: absolute;
+    top: 1rem;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+@keyframes cssAnimation {
+    0%   {opacity: 1;}
+    90%  {opacity: 1;}
+    100% {opacity: 0;}
 }

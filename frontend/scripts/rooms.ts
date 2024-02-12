@@ -1,3 +1,4 @@
+import { displayErrorAlert } from './components/alert'
 import { createExpandableRoomContainer } from './components/expandableRoomContainer'
 import { createSocket } from './resources/socket'
 import { Room } from './resources/types'
@@ -11,7 +12,7 @@ const handleDeleteRoom = async (roomId: string) => {
     try {
         socket.emit({ event: 'deleteRoom', data: roomId })
     } catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error deleting data. Please try again.' })
     }
 }
 
@@ -19,7 +20,7 @@ const getButtons = (roomId: string) => {
     const joinButton: ElementDataType = {
         tagName: 'button',
         attributes: [
-            { name: 'class', value: 'rooms-button-join' },
+            { name: 'class', value: 'button-success' },
             { name: 'id', value: `button-join-${roomId}` },
         ],
         properties: [{ name: 'innerHTML', value: 'Join' }],
@@ -136,7 +137,7 @@ const loadData = async () => {
         });
 
     } catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error loading data. Please try again.' })
     }
 }
 
