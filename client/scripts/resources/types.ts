@@ -49,3 +49,9 @@ export type Student = {
     facultyNumber: string
     username: string
 }
+
+export type RoomStudent = Student & {
+    status: 'active' | 'inactive' | 'finished' | 'in-exam'
+    approximateTimeUntilExam: number
+    examResource?: string
+}

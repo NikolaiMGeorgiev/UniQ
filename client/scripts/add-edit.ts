@@ -1,3 +1,4 @@
+import { displayErrorAlert } from './components/alert.js'
 import { createRoom, fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
 import { mapToCreateRoom } from './resources/mappers.js'
 import { Room, Student } from './resources/types.js'
@@ -135,7 +136,7 @@ const onSubmit = async (event: Event) => {
         // socket.emit({ event: 'updateRoom', data: roomData })
         redirect({ path: 'rooms' })
     } catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error updating data. Please try again.' })
     }
 }
 
@@ -239,7 +240,7 @@ const loadData = async () => {
     try {
         const studentsData = await fetchStudents()
         if (!studentsData.success) {
-            // TODO: handle error
+            displayErrorAlert({ message: 'Error fetching data. Please try again.' })
             return
         }
 
@@ -255,7 +256,7 @@ const loadData = async () => {
 
         options.map((option) => container?.appendChild(option))
     } catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error fetching data. Please try again.' })
     }
 
     if (!roomId) {
@@ -266,7 +267,7 @@ const loadData = async () => {
         const roomData = await fetchRoom(roomId)
 
         if (!roomData.success) {
-            // TODO: handle error
+            displayErrorAlert({ message: 'Error fetching data. Please try again.' })
             return
         }
 
@@ -286,7 +287,7 @@ const loadData = async () => {
 
         fillInInitialFormValues(roomData.data)
     } catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error fetching data. Please try again.' })
     }
 }
 

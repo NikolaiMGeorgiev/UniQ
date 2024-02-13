@@ -1,3 +1,4 @@
+import { displayErrorAlert } from './components/alert.js'
 import { createExpandableRoomContainer } from './components/expandableRoomContainer.js'
 import { deleteRoom, getRooms } from './resources/api.js'
 import { createSocket } from './resources/socket.js'
@@ -15,7 +16,7 @@ const handleDeleteRoom = async (roomId: string) => {
         document.querySelector(`#item-${roomId}`)?.remove()
         // socket.emit({ event: 'deleteRoom', data: roomId })
     } catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error deleting data. Please try again.' })
     }
 }
 
@@ -23,7 +24,7 @@ const getButtons = (roomId: string) => {
     const joinButton: ElementDataType = {
         tagName: 'button',
         attributes: [
-            { name: 'class', value: 'rooms-button-join' },
+            { name: 'class', value: 'button-success' },
             { name: 'id', value: `button-join-${roomId}` },
         ],
         properties: [{ name: 'innerHTML', value: 'Join' }],
@@ -145,7 +146,7 @@ const loadData = async () => {
         // });
 
     } catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error loading data. Please try again.' })
     }
 }
 

@@ -7,6 +7,12 @@ type EmitArgs = {
 } | {
     event: 'updateRoom',
     data: CreateRoom | UpdateRoom
+} | {
+    event: 'getRoomStudents',
+    data: string
+} | {
+    event: 'getRoomStudent',
+    data: string
 }
 
 type UserSocketData = {

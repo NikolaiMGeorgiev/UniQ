@@ -3,7 +3,6 @@ import { Room, Student, ResponseType, UserTeacher, UserStudent } from './types.j
 const apiRoute = 'http://localhost:8080'
 const token = localStorage.getItem("accessToken");
 
-// TODO: add better typing
 type LoginType = (params: BodyInit) => Promise<ResponseType<UserStudent | UserTeacher>>
 export const login: LoginType = async (params) => {
     const response = await fetch(`${apiRoute}/login`, {

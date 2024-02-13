@@ -3,4 +3,4 @@ export const getRoomIdFromURL = () =>
         ?.replace('?', '')
         .split('&')
         .map((el) => el.split('='))
-        .find((el) => el[0] === 'id')?.[1]
+        .find((el) => el[0] === 'id')?.[1] ?? ''
