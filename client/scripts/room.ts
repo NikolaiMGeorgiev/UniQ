@@ -1,7 +1,9 @@
 import { displayErrorAlert } from './components/alert.js'
 import { createExpandableRoomContainer } from './components/expandableRoomContainer.js'
+import { createStudentContainer } from './components/studentContainer.js'
 import { fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
 import { createSocket } from './resources/socket.js'
+import { RoomStudent } from './resources/types.js'
 import { ElementDataType } from './utils/element.js'
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js'
 import { redirect } from './utils/redirect.js'
@@ -136,11 +138,12 @@ const loadSingleStudent = async () => {
     const roomId = getRoomIdFromURL()
 
     try {
-        socket.emit({ event: 'getRoomStudent', data: roomId })
+        // TODO uncomment when the socket is ready
+        // socket.emit({ event: 'getRoomStudent', data: roomId })
 
-        socket.on('roomStudent', (data: { data: RoomStudent }) => {
-            displayStudent(data.data)
-        })
+        // socket.on('roomStudent', (data: { data: RoomStudent }) => {
+        //     displayStudent(data.data)
+        // })
     } catch (err) {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' })
     }

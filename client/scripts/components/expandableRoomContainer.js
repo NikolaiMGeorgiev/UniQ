@@ -10,7 +10,7 @@ const createInfoContainerElements = (roomData, classPrefix, expanded) => {
         attributes: [
             {
                 name: 'class',
-                value: `${classPrefix}-status--${roomData.status}`,
+                value: `${classPrefix}-status ${classPrefix}-status--${roomData.status}`,
             },
         ],
         properties: [{ name: 'innerHTML', value: roomData.status }],
@@ -48,7 +48,7 @@ const createInfoContainerElements = (roomData, classPrefix, expanded) => {
             { name: 'id', value: `start-time-${roomData.id}` },
         ],
         properties: [
-            { name: 'innerHTML', value: `Start time: ${roomData.startTime}` },
+            { name: 'innerHTML', value: `Start time: ${(new Date(roomData.startTime)).toUTCString()}` },
         ],
     };
     const showMoreDetailsButton = {

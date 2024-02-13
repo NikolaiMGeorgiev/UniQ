@@ -1,3 +1,4 @@
+import { displayErrorAlert } from './components/alert.js';
 import { createRoom, fetchRoom, fetchStudents } from './resources/api.js';
 import { mapToCreateRoom } from './resources/mappers.js';
 import { onDrag, onDragOver, onDrop } from './utils/dragAndDrop.js';
@@ -116,7 +117,7 @@ const onSubmit = async (event) => {
         redirect({ path: 'rooms' });
     }
     catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error updating data. Please try again.' });
     }
 };
 const onDiscard = () => {
@@ -201,7 +202,7 @@ const loadData = async () => {
     try {
         const studentsData = await fetchStudents();
         if (!studentsData.success) {
-            // TODO: handle error
+            displayErrorAlert({ message: 'Error fetching data. Please try again.' });
             return;
         }
         if (!studentsData.data) {
@@ -215,7 +216,7 @@ const loadData = async () => {
         options.map((option) => container?.appendChild(option));
     }
     catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error fetching data. Please try again.' });
     }
     if (!roomId) {
         return;
@@ -223,7 +224,7 @@ const loadData = async () => {
     try {
         const roomData = await fetchRoom(roomId);
         if (!roomData.success) {
-            // TODO: handle error
+            displayErrorAlert({ message: 'Error fetching data. Please try again.' });
             return;
         }
         if (!roomData.data || !roomData.data) {
@@ -237,7 +238,7 @@ const loadData = async () => {
         fillInInitialFormValues(roomData.data);
     }
     catch (err) {
-        // TODO: handle error
+        displayErrorAlert({ message: 'Error fetching data. Please try again.' });
     }
 };
 (async () => {
