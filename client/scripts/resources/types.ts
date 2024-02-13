@@ -9,6 +9,25 @@ export type Room = {
     description: string
 }
 
+export type Schedule = {
+    studentId: string,
+    position: number,
+    finished: boolean
+}
+
+export type RoomSchedule = {
+    roomData: Room
+    schedule: Schedule[]
+}
+
+// export type QueueSlot = {
+//     studentId: string,
+//     position: number,
+//     examResource: string
+// }
+
+// export type RoomQueue = QueueSlot[]
+
 export type CreateRoom = Omit<Room, 'id'> & {
     studentIds: string[]
 }
@@ -50,8 +69,11 @@ export type Student = {
     username: string
 }
 
-export type RoomStudent = Student & {
-    status: 'active' | 'inactive' | 'finished' | 'in-exam'
-    approximateTimeUntilExam: number
-    examResource?: string
-}
+// export type RoomStudent = Student & {
+//     position: number,
+//     roomData: Room
+
+    // status: 'active' | 'inactive' | 'finished' | 'in-exam'
+    // approximateTimeUntilExam: number
+    // examResource?: string
+// }
