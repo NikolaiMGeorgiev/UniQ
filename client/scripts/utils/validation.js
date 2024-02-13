@@ -5,10 +5,11 @@ export const validator = function () {
     let type = 'string';
     let required = true;
     let minLength = 0;
+    let minValue = -Infinity;
     let requiredErrorMessage = '';
     let typeErrorMessage = '';
     let minLengthErrorMessage = '';
-    // let allowedValues: string[] = []
+    let minValueErrorMessage = ''
     return {
         string: function () {
             type = 'string';
@@ -47,6 +48,13 @@ export const validator = function () {
             required = false;
             return this;
         },
+        min: function (value, errorMessage) {
+            minValue = value
+            minValueErrorMessage =
+                errorMessage ??
+                `The min value for this field is ${minValue}`
+            return this
+        },
         minLength: function (l, errorMessage) {
             minLength = l;
             minLengthErrorMessage =
@@ -54,11 +62,6 @@ export const validator = function () {
                     `This field should be at least ${minLength} characters long`;
             return this;
         },
-        // oneOf: function(options: string[]) {
-        //     type = 'array'
-        //     allowedValues = options
-        //     return this
-        // },
         typeError: function (errorMessage) {
             typeErrorMessage = errorMessage;
             return this;
@@ -69,6 +72,8 @@ export const validator = function () {
             if (minLength > 0 &&
                 (typeof value === 'boolean' || value.length < minLength))
                 return minLengthErrorMessage;
+            if (typeof value === 'string' && !isNaN(parseInt(value)) && minValue > -Infinity && parseInt(value) < minValue)
+                return minValueErrorMessage
             if (type === 'multiselect' && !getSelectedOptions().length)
                 return typeErrorMessage;
             if (typeof value !== 'string')
@@ -83,7 +88,6 @@ export const validator = function () {
                 return typeErrorMessage;
             if (type === 'password' && !isValidPassword(value))
                 return typeErrorMessage;
-            // if (type === 'array' && !allowedValues.includes(value)) return typeErrorMessage
         },
     };
 };
@@ -115,7 +119,6 @@ const getRadioInputValue = (fields) => {
     });
     return value;
 };
-// TODO: fix schema type
 export const validate = (schema) => {
     let valid = true;
     Object.keys(schema).forEach((key) => {

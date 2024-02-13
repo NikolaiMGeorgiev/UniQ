@@ -54,31 +54,26 @@ export const students = [
     {
         id: '11',
         name: 'Ivan',
-        username: 'ivan_94',
         facultyNumber: '81500',
     },
     {
         id: '12',
         name: 'Peter',
-        username: 'peter_petrov',
         facultyNumber: '81501',
     },
     {
         id: '13',
         name: 'Stoyan',
-        username: 'ststst',
         facultyNumber: '81502',
     },
     {
         id: '14',
         name: 'Katya',
-        username: 'kk_atya_123123123123',
         facultyNumber: '81503',
     },
     {
         id: '15',
         name: 'Ivan',
-        username: 'ivan40',
         facultyNumber: '81504',
     },
 ];

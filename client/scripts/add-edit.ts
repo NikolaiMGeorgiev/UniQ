@@ -27,6 +27,11 @@ const schema = {
         .string()
         .required('Please input start time')
         .typeError('Please input start time'),
+    duration: validator()
+        .number()
+        .min(1)
+        .required('Please input duration')
+        .typeError('Please input duration'),
     type: validator().boolean().required('Room type is a required field'),
     students: validator()
         .multiselect()
@@ -43,6 +48,9 @@ const clearErrorsOnChange = () => {
     document
         .getElementById('startTime')
         ?.addEventListener('change', () => clearError('startTime'))
+    document
+        .getElementById('duration')
+        ?.addEventListener('change', () => clearError('duration'))
     document
         .getElementById('queue')
         ?.addEventListener('change', () => clearError('type-wrapper'))
@@ -156,7 +164,7 @@ const createStudentsSelectOptions = (
         properties: [
             {
                 name: 'innerHTML',
-                value: `${student.name} (${student.username})`,
+                value: `${student.name} ${student.facultyNumber ? `(${student.facultyNumber})` : ''}`,
             },
         ],
     })

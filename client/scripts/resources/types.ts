@@ -38,7 +38,6 @@ export type UpdateRoom = Partial<Room> & {
 
 type User = {
     id: string
-    username: string
     name: string
     password: string
     token: string
@@ -66,7 +65,6 @@ export type Student = {
     id: string
     name: string
     facultyNumber: string
-    username: string
 }
 
 // export type RoomStudent = Student & {

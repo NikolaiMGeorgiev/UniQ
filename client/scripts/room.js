@@ -66,7 +66,7 @@ const loadAllStudents = async () => {
     try {
         const students = await fetchStudents();
         if (!students.success) {
-            // todo: handle error
+            displayErrorAlert({ message: 'Error fetching data. Please try again.' })
             return;
         }
     }

@@ -22,7 +22,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "NODE_PATH=./node_modules node server/index.js"
+    "start": "NODE_PATH=./node_modules node server/index.js",
+    "tsc": "tsc -b"
   },
   "repository": {
     "type": "git",
