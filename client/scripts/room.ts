@@ -1,5 +1,6 @@
 import { createExpandableRoomContainer } from './components/expandableRoomContainer.js'
 import { fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
+import { createSocket } from './resources/socket.js'
 import { ElementDataType } from './utils/element.js'
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js'
 import { redirect } from './utils/redirect.js'
@@ -109,7 +110,6 @@ const loadSingleStudent = async () => {}
         if (!roomId) {
             return redirect({ path: 'rooms' })
         }
-        await updateRoom(roomId, JSON.stringify({ status: "started" }))
     } else {
         await loadSingleStudent()
     }

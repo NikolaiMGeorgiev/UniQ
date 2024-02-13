@@ -13,7 +13,7 @@ async function getUserByEmail(collection, email) {
 }
 
 async function getStudents(collection) {
-    const students = await collection.find({ role: USER_TYPE.student }).toArray();
+    let students = await collection.find({ role: USER_TYPE.student }).toArray();
     students = students.map(studentData => {
         return {
             id: studentData._id.toString(),

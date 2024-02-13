@@ -1,5 +1,5 @@
 import { createExpandableRoomContainer } from './components/expandableRoomContainer.js';
-import { fetchRoom, fetchStudents, updateRoom } from './resources/api.js';
+import { fetchRoom, fetchStudents } from './resources/api.js';
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js';
 import { redirect } from './utils/redirect.js';
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js';
@@ -84,7 +84,6 @@ const loadSingleStudent = async () => { };
         if (!roomId) {
             return redirect({ path: 'rooms' });
         }
-        await updateRoom(roomId, JSON.stringify({ status: "started" }));
     }
     else {
         await loadSingleStudent();

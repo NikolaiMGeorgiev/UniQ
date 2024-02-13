@@ -3,12 +3,13 @@ async function getRoomQueue(collection, roomId) {
 }
 
 async function addToQueue(collection, data) {
-    return await collection.insertOne({
+    const result = await collection.insertOne({
         room_id: data.roomId,
         studentId: data.userId,
         link: null,
         entryTime: new Date().getTime()
     });
+    return result && result.insertedId ? { status: 200 } : { status: 404 };
 }
 
 async function addUserLink(collection, data) {
@@ -25,7 +26,7 @@ async function emptyQueueByRoom(collection, roomId) {
 async function removeFromRoomQueue(collection, data) {
     return await collection.deleteOne({ 
        room_id : data.roomId,
-       studentId: data.studentId
+       studentId: data.userId
     });
 }
 

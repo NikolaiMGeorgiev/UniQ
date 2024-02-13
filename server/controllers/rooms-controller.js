@@ -9,8 +9,8 @@ import {
 } from "../models/schedule-model.js";
 import { handleResponse } from "../helpers/reqest-helper.js";
 import { ObjectId } from "mongodb";
-
-const DATABASE_ID_COLUMNS = ["userId", "roomId"];
+import { DATABASE_ID_COLUMNS } from "../../config.js";
+import { addToQueue, removeFromRoomQueue } from "../models/queue-model.js";
 
 class RoomsController {
     
@@ -21,19 +21,45 @@ class RoomsController {
 
     async initEndpoints(app) {
         app.get('/api/rooms', async (req, res) => {
-            const data = await this.getFullData(req, true);
+            const data = await this.getReqestData(req, true);
             const result = await this.getRoomsData(data);
             handleResponse(res, result);
         });
 
         app.get('/api/rooms/:roomId', async (req, res) => {
-            const data = await this.getFullData(req, true);
-            const result = await this.getRoomData(data);
+            const data = await this.getReqestData(req, true);
+            let result = await this.getRoomData(data);
+
+            if (!result.data || !result.data.roomData) {
+                return handleResponse(res, result);
+            }
+
+            const resultData = result.data;
+            const isTeacher = data.userId.toString() == resultData.roomData.creatorId.toString();
+            if (isTeacher) {
+                const roomUpdateData = { 
+                    _id: resultData.roomData._id, 
+                    status: "started" 
+                };
+                resultData.roomData.status = "started";
+                result = await this.db.querySingle("rooms", roomUpdateData, editRoom);
+            } else {
+                const queueData = {
+                    roomId: data.roomData.roomId, 
+                    userId: data.userId
+                };
+                await this.db.querySingle("queue", queueData, removeFromRoomQueue);
+                result = await this.db.querySingle("queue", queueData, addToQueue);
+            }
+            if (result.status == 200) {
+                result.data = resultData;
+            }
+            
             handleResponse(res, result);
         });
         
         app.post('/api/rooms', async (req, res) => {
-            const data = await this.getFullData(req);
+            const data = await this.getReqestData(req);
             const roomData = data.roomData;
             const studentIds = roomData.students ? roomData.students.split(',') : [];
             roomData.creatorId = data.userId;
@@ -50,7 +76,7 @@ class RoomsController {
 
         app.put('/api/rooms/:id', async (req, res) => {
             // TODO: make it possible to edit schedule as well
-            const data = await this.getFullData(req);
+            const data = await this.getReqestData(req);
             const updatedRoomData = data.roomData;
             const roomId = new ObjectId(updatedRoomData.id);
             const roomData = await this.db.querySingle("rooms", roomId, getRoom);
@@ -65,7 +91,7 @@ class RoomsController {
         });
 
         app.delete('/api/rooms/:id', async (req, res) => {
-            const data = await this.getFullData(req);
+            const data = await this.getReqestData(req);
             const roomId = new ObjectId(data.roomData.id);
             const roomData = await this.db.querySingle("rooms", roomId, getRoom);
 
@@ -119,7 +145,7 @@ class RoomsController {
         return { data };
     }
 
-    async getFullData(req, getUserData = false) {
+    async getReqestData(req, getUserData = false) {
         const data = { roomData: req.body && Object.keys(req.body).length ? req.body : {} };
         const userId = req.auth && req.auth.id ? new ObjectId(req.auth.id) : null;
         data.userId = userId;

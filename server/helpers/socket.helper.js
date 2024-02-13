@@ -17,8 +17,7 @@ export class SocketHelper {
                 console.log('User disconnected');
             });
         
-            socket.on('chat message', (msg) => {
-                console.log('message: ' + msg);
+            socket.on('room activated', (roomId) => {
                 io.emit('chat message', msg);
             });
         });

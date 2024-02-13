@@ -40,8 +40,7 @@ export const fetchRooms = async () => {
     return {
         success: true,
         error: null,
-        // data: rooms,
-        data: []
+        data: [] //rooms
     };
 };
 export const fetchRoom = async (id) => {

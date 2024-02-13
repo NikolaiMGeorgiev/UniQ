@@ -133,7 +133,7 @@ const onSubmit = async (event: Event) => {
         const formData = prepareFormData(roomFormData)
         const result = await createRoom(formData)
         // socket.emit({ event: 'updateRoom', data: roomData })
-        // redirect({ path: 'rooms' })
+        redirect({ path: 'rooms' })
     } catch (err) {
         // TODO: handle error
     }

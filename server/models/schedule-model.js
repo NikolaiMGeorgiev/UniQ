@@ -28,12 +28,12 @@ async function getUserRoomSchedule(collection, data) {
 
 async function addToShcedule(collection, roomData) {
     let scheduleData = [];
-    const students = roomData.students
+    const students = roomData.students;
     for (let position in students) {
         const student = students[position];
         scheduleData.push({
             room_id: roomData._id,
-            studentId: new ObjectId(student.id),
+            studentId: new ObjectId(student),
             position: position,
             finished: 0
         });
