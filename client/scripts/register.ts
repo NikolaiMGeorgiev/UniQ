@@ -1,8 +1,8 @@
+import { displayErrorAlert } from './components/alert.js'
 import { register } from './resources/api.js'
 import { DEFAULT_ERROR_MESSAGE } from './resources/constants.js'
 import { mapFormDataToRegister } from './resources/mappers/registerMappers.js'
 import { clearError } from './utils/form.js'
-import { clearMessage, showMessage } from './utils/messages.js'
 import { redirect } from './utils/redirect.js'
 import { isFormElement } from './utils/typecheck.js'
 import { isUserLoggedIn } from './utils/user.js'
@@ -27,7 +27,6 @@ const schema = {
 
 const onRegister = async (event: SubmitEvent) => {
     event.preventDefault()
-    clearMessage('error-message')
     const loginForm = document.getElementById('register-form')
 
     if (!loginForm || !isFormElement(loginForm)) {
@@ -50,11 +49,11 @@ const onRegister = async (event: SubmitEvent) => {
 
         if ('error' in response && response.error) {
             response.error?.message
-            showMessage('error-message', response.error?.message)
+            displayErrorAlert({ message: response.error?.message })
         }
     } catch (err) {
         console.error(err)
-        showMessage('error-message', DEFAULT_ERROR_MESSAGE)
+        displayErrorAlert({ message: DEFAULT_ERROR_MESSAGE })
     }
 }
 
