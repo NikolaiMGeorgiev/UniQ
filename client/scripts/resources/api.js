@@ -12,7 +12,7 @@ export const login = async (params) => {
 export const register = async (params) => {
     const response = await fetch(`${apiRoute}/register`, {
         method: 'POST',
-        body: params,
+        body: JSON.stringify(params),
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
     });

@@ -1,6 +1,5 @@
-import { roomTypes, statuses } from "../types.js";
 import { getStringValue } from "./utils.js";
-const getType = (formDataEntries, defaultValue = roomTypes[0]) => {
+const getType = (formDataEntries, defaultValue) => {
     if (!('type' in formDataEntries)) {
         return defaultValue;
     }
@@ -10,7 +9,7 @@ const getType = (formDataEntries, defaultValue = roomTypes[0]) => {
     }
     return defaultValue;
 };
-const getStatus = (formDataEntries, defaultValue = statuses[0]) => {
+const getStatus = (formDataEntries, defaultValue) => {
     if (!('status' in formDataEntries)) {
         return defaultValue;
     }
@@ -22,8 +21,8 @@ const getStatus = (formDataEntries, defaultValue = statuses[0]) => {
 };
 export const mapFormDataToCreateRoom = (formData, studentIds, id) => {
     const formDataEntries = Object.fromEntries(formData.entries());
-    const type = getType(formDataEntries);
-    const status = getStatus(formDataEntries);
+    const type = getType(formDataEntries, 'queue');
+    const status = getStatus(formDataEntries, 'not-started');
     return {
         ...(id && { id }),
         name: getStringValue(formDataEntries, 'name') ?? '',
@@ -33,13 +32,13 @@ export const mapFormDataToCreateRoom = (formData, studentIds, id) => {
         status,
         turnDuration: 'turnDuration' in formDataEntries ? Number(formDataEntries.turnDuration) : 1,
         description: getStringValue(formDataEntries, 'description') ?? '',
-        studentIds,
+        students: studentIds,
     };
 };
 export const mapFormDataToUpdateRoom = (formData, studentIds, id) => {
     const formDataEntries = Object.fromEntries(formData.entries());
-    const type = getType(formDataEntries);
-    const status = getStatus(formDataEntries);
+    const type = getType(formDataEntries, 'queue');
+    const status = getStatus(formDataEntries, 'not-started');
     return {
         ...(id && { id }),
         name: getStringValue(formDataEntries, 'name'),
@@ -49,6 +48,6 @@ export const mapFormDataToUpdateRoom = (formData, studentIds, id) => {
         ...(status && { status }),
         turnDuration: 'turnDuration' in formDataEntries ? Number(formDataEntries.turnDuration) : undefined,
         description: getStringValue(formDataEntries, 'description'),
-        studentIds,
+        students: studentIds,
     };
 };

@@ -1,4 +1,4 @@
-import { Room, Student, ResponseType, UserTeacher, UserStudent, RoomSchedule, CreateRoom, UpdateRoom, Login } from './types.js'
+import { Room, Student, ResponseType, UserTeacher, UserStudent, RoomSchedule, CreateRoom, UpdateRoom, Login, Register } from './types.js'
 
 const apiRoute = 'http://localhost:8080'
 const token = localStorage.getItem("accessToken");
@@ -15,11 +15,11 @@ export const login: LoginType = async (params) => {
     return response.json()
 }
 
-type RegisterType = (params: BodyInit) => Promise<ResponseType<null>>
+type RegisterType = (params: Register) => Promise<ResponseType<null>>
 export const register: RegisterType = async (params) => {
     const response = await fetch(`${apiRoute}/register`, {
         method: 'POST',
-        body: params,
+        body: JSON.stringify(params),
         headers: { 'Content-Type': 'application/json' },
         mode: 'cors',
     })

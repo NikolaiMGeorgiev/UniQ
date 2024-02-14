@@ -204,6 +204,11 @@ const fillInInitialFormValues = (roomSchedule) => {
     }
     document.getElementById(roomData.type)?.setAttribute('checked', 'true');
 };
+const addStudents = (studentData, preincludedStudentIds) => {
+    const container = document.getElementById('select');
+    const options = createStudentsSelectOptions(studentData, preincludedStudentIds);
+    options.map((option) => container?.appendChild(option));
+};
 const loadData = async () => {
     const roomId = getRoomIdFromURL();
     let studentData = [];
@@ -222,6 +227,7 @@ const loadData = async () => {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' });
     }
     if (!roomId) {
+        addStudents(studentData, []);
         return;
     }
     try {
@@ -238,9 +244,7 @@ const loadData = async () => {
                 response.data.roomData.status === 'not-started')) {
             return redirect({ path: 'rooms' });
         }
-        const container = document.getElementById('select');
-        const options = createStudentsSelectOptions(studentData, response.data.schedule.map((elem) => elem.studentId));
-        options.map((option) => container?.appendChild(option));
+        addStudents(studentData, response.data.schedule.map((elem) => elem.studentId));
         fillInInitialFormValues(response.data);
     }
     catch (err) {

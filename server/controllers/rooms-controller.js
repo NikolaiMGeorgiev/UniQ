@@ -36,7 +36,7 @@ class RoomsController {
 
             const resultData = result.data;
             const roomData = resultData.roomData;
-            const isTeacher = data.userId.toString() == roomData.creatorId.toString();
+            const isTeacher = requestData.userId.toString() == roomData.creatorId.toString();
             if (isTeacher) {
                 const roomUpdateData = { 
                     _id: roomData._id, 
@@ -63,7 +63,7 @@ class RoomsController {
         app.post('/api/rooms', async (req, res) => {
             const requestData = await getReqestData(this.db, req);
             const roomData = requestData.data;
-            const studentIds = roomData.students ? roomData.students.split(',') : [];
+            const studentIds = roomData.students;
             roomData.creatorId = requestData.userId;
 
             let result = await this.db.querySingle("rooms", roomData, addRoom);

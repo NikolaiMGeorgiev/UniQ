@@ -1,6 +1,7 @@
 import { register } from './resources/api.js'
 import { DEFAULT_ERROR_MESSAGE } from './resources/constants.js'
-import { clearError, prepareFormData } from './utils/form.js'
+import { mapFormDataToRegister } from './resources/mappers/registerMappers.js'
+import { clearError } from './utils/form.js'
 import { clearMessage, showMessage } from './utils/messages.js'
 import { redirect } from './utils/redirect.js'
 import { isFormElement } from './utils/typecheck.js'
@@ -39,7 +40,7 @@ const onRegister = async (event: SubmitEvent) => {
     }
 
     try {
-        const formData = prepareFormData(new FormData(loginForm))
+        const formData = mapFormDataToRegister(new FormData(loginForm))
         const response = await register(formData)
 
         if (response.success) {

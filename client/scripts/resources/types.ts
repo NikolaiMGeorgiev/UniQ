@@ -32,11 +32,11 @@ export type RoomSchedule = {
 }
 
 export type CreateRoom = Omit<Room, 'id'> & {
-    studentIds: string[]
+    students: string[]
 }
 
 export type UpdateRoom = Partial<Room> & {
-    studentIds?: string[]
+    students?: string[]
 }
 
 type User = {
@@ -48,11 +48,11 @@ type User = {
 }
 
 export type UserStudent = User & {
-    role: 'student'
+    role: typeof roles[0]
 }
 
 export type UserTeacher = User & {
-    role: 'teacher'
+    role: typeof roles[1]
 }
 
 export type ResponseType<T> = {
@@ -72,3 +72,13 @@ export type Student = {
 }
 
 export type Login = { email: string, password: string }
+
+export const roles = ['student', 'teacher'] as const
+export type Role = typeof roles[number]
+
+export type Register = {
+    email: string,
+    password: string
+    name: string
+    role: Role
+}

@@ -5,3 +5,4 @@ export const roomTypes = [
     'schedule',
     'queue'
 ];
+export const roles = ['student', 'teacher'];
