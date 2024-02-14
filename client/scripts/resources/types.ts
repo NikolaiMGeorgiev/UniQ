@@ -1,15 +1,24 @@
-type Status = 'not-started' | 'active' | 'break' | 'closed'
+export const statuses = [
+    'not-started', 'active', 'break', 'closed'
+] as const
+export type Status = typeof statuses[number]
 
 export type Room = {
     id: string
     name: string
     creatorId: string
     startTime: string
-    type: 'schedule' | 'queue'
+    type: RoomType
     status: Status
     turnDuration: number
     description: string
 }
+
+export const roomTypes = [
+    'schedule',
+    'queue'
+] as const
+export type RoomType = typeof roomTypes[number]
 
 export type Schedule = {
     studentId: string
@@ -32,6 +41,7 @@ export type UpdateRoom = Partial<Room> & {
 
 type User = {
     id: string
+    email: string
     name: string
     password: string
     token: string
@@ -60,3 +70,5 @@ export type Student = {
     name: string
     facultyNumber: string
 }
+
+export type Login = { email: string, password: string }

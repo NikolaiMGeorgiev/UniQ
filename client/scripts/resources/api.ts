@@ -1,14 +1,14 @@
-import { Room, Student, ResponseType, UserTeacher, UserStudent, RoomSchedule } from './types.js'
+import { Room, Student, ResponseType, UserTeacher, UserStudent, RoomSchedule, CreateRoom, UpdateRoom, Login } from './types.js'
 
 const apiRoute = 'http://localhost:8080'
 const token = localStorage.getItem("accessToken");
 
-type LoginType = (params: BodyInit) => Promise<ResponseType<UserStudent | UserTeacher>>
+type LoginType = (params: Login) => Promise<ResponseType<UserStudent | UserTeacher>>
 export const login: LoginType = async (params) => {
     const response = await fetch(`${apiRoute}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: params,
+        body: JSON.stringify(params),
         mode: 'cors',
     })
 
@@ -74,13 +74,13 @@ export const fetchRoom: FetchRoomType = async (id) => {
     }
 }
 
-type CreateRoomType = (roomData: BodyInit) => Promise<ResponseType<null>>
+type CreateRoomType = (roomData: CreateRoom) => Promise<ResponseType<null>>
 export const createRoom: CreateRoomType = async (roomData) => {
     const response = await fetch(`${apiRoute}/api/rooms`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'  },
         mode: 'cors',
-        body: roomData,
+        body: JSON.stringify(roomData),
     })
 
     return response.json()
@@ -88,14 +88,14 @@ export const createRoom: CreateRoomType = async (roomData) => {
 
 type UpdateRoomType = (
     id: string,
-    roomData: BodyInit
+    roomData: UpdateRoom
 ) => Promise<ResponseType<null>>
 export const updateRoom: UpdateRoomType = async (id, roomData) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {
         method: 'PUT',
         mode: 'cors',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: roomData,
+        body: JSON.stringify(roomData),
     })
 
     return response.json()

@@ -1,18 +1,17 @@
-import { displayErrorAlert } from './components/alert.js'
-import { createRoom, fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
-import { mapToCreateRoom } from './resources/mappers.js'
-import { Room, Student } from './resources/types.js'
-import { onDrag, onDragOver, onDrop } from './utils/dragAndDrop.js'
-import createElement, { ElementDataType } from './utils/element.js'
-import { clearError, prepareFormData } from './utils/form.js'
-import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js'
-import { getSelectedOptions } from './utils/getSelectedStudentIds.js'
-import { redirect } from './utils/redirect.js'
-import { isFormElement, isInputElement } from './utils/typecheck.js'
-import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js'
-import { validate, validator } from './utils/validation.js'
+import { displayErrorAlert } from './components/alert'
+import { createRoom, fetchRoom, fetchStudents, updateRoom } from './resources/api'
+import { mapFormDataToCreateRoom, mapFormDataToUpdateRoom } from './resources/mappers/roomMappers'
+import { RoomSchedule, Student } from './resources/types'
+import { onDrag, onDragOver, onDrop } from './utils/dragAndDrop'
+import createElement, { ElementDataType } from './utils/element'
+import { clearError } from './utils/form'
+import { getRoomIdFromURL } from './utils/getRoomIdFromURL'
+import { getSelectedOptions } from './utils/getSelectedStudentIds'
+import { redirect } from './utils/redirect'
+import { isFormElement, isInputElement } from './utils/typecheck'
+import { isUserLoggedIn, isUserStudent } from './utils/user'
+import { validate, validator } from './utils/validation'
 
-// const socket = createSocket()
 
 const schema = {
     name: validator()
@@ -118,30 +117,26 @@ const onSubmit = async (event: Event) => {
 
     const formData = new FormData(addEditForm)
     const roomId = getRoomIdFromURL()
-    const roomData = mapToCreateRoom(formData, getSelectedOptions(), roomId)
-
-    //TODO separate edit and create
-    // if (!roomId) {
-    //     redirect({ path: 'rooms' })
-    //     return
-    // }
 
     try {
-        //TODO separate edit and create
-        // const result = await updateRoom(roomId, roomData)
-        let studentSchedule: Array<string> = []
-        document.querySelectorAll('[name="included"]').forEach((studentNode) => {
-            const studetnId = studentNode.getAttribute('value')
-            if (studetnId) {
-                studentSchedule.push(studetnId)
+        if (!roomId) {
+            const roomData = mapFormDataToCreateRoom(formData, getSelectedOptions(), roomId)
+            const response = await createRoom(roomData)
+            if ('error' in response) {
+                displayErrorAlert(response.error)
+                return
             }
-        });
+        }
 
-        let roomFormData = new FormData(addEditForm)
-        roomFormData.append("students", studentSchedule.join(','))
-        const formData = prepareFormData(roomFormData)
-        const result = await createRoom(formData)
-        // socket.emit({ event: 'updateRoom', data: roomData })
+        if (roomId) {
+            const roomData = mapFormDataToUpdateRoom(formData, getSelectedOptions(), roomId)
+            const response = await updateRoom(roomId, roomData)
+            if ('error' in response) {
+                displayErrorAlert(response.error)
+                return
+            }
+        }
+
         redirect({ path: 'rooms' })
     } catch (err) {
         displayErrorAlert({ message: 'Error updating data. Please try again.' })
@@ -228,11 +223,15 @@ const createStudentsSelectOptions = (
     )
 }
 
-const fillInInitialFormValues = (roomData: Room) => {
+const fillInInitialFormValues = (roomSchedule: RoomSchedule) => {
+    const roomData = roomSchedule.roomData
     document.getElementById('name')?.setAttribute('value', roomData.name)
     document
         .getElementById('description')
         ?.setAttribute('value', roomData.description)
+    document
+        .getElementById('duration')
+        ?.setAttribute('value', String(roomData.turnDuration ?? ''))
 
     const startTime = document.getElementById('startTime')
     if (startTime && isInputElement(startTime)) {
@@ -244,6 +243,7 @@ const fillInInitialFormValues = (roomData: Room) => {
 
 const loadData = async () => {
     const roomId = getRoomIdFromURL()
+    let studentData: Student[] = []
 
     try {
         const studentsData = await fetchStudents()
@@ -256,13 +256,7 @@ const loadData = async () => {
             return redirect({ path: 'rooms' })
         }
 
-        const container = document.getElementById('select')
-        const options = createStudentsSelectOptions(studentsData.data, [
-            '12',
-            '14',
-        ])
-
-        options.map((option) => container?.appendChild(option))
+        studentData = studentsData.data
     } catch (err) {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' })
     }
@@ -272,28 +266,31 @@ const loadData = async () => {
     }
 
     try {
-        const roomData = await fetchRoom(roomId)
+        const response = await fetchRoom(roomId)
 
-        if (!roomData.success) {
+        if (!response.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' })
             return
         }
 
-        if (!roomData.data || !roomData.data) {
+        if (!response.data || !response.data) {
             return redirect({ path: 'rooms' })
         }
 
         if (
             isUserStudent() &&
             (
-                roomData.data.status === 'closed' ||
-                roomData.data.status === 'not-started'
+                response.data.roomData.status === 'closed' ||
+                response.data.roomData.status === 'not-started'
             )
         ) {
             return redirect({ path: 'rooms' })
         }
 
-        fillInInitialFormValues(roomData.data)
+        const container = document.getElementById('select')
+        const options = createStudentsSelectOptions(studentData, response.data.schedule.map((elem) => elem.studentId))
+        options.map((option) => container?.appendChild(option))
+        fillInInitialFormValues(response.data)
     } catch (err) {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' })
     }

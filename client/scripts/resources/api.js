@@ -4,7 +4,7 @@ export const login = async (params) => {
     const response = await fetch(`${apiRoute}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: params,
+        body: JSON.stringify(params),
         mode: 'cors',
     });
     return response.json();
@@ -61,7 +61,7 @@ export const createRoom = async (roomData) => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         mode: 'cors',
-        body: roomData,
+        body: JSON.stringify(roomData),
     });
     return response.json();
 };
@@ -70,7 +70,7 @@ export const updateRoom = async (id, roomData) => {
         method: 'PUT',
         mode: 'cors',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: roomData,
+        body: JSON.stringify(roomData),
     });
     return response.json();
 };

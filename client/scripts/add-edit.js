@@ -1,16 +1,15 @@
 import { displayErrorAlert } from './components/alert.js';
-import { createRoom, fetchRoom, fetchStudents } from './resources/api.js';
-import { mapToCreateRoom } from './resources/mappers.js';
+import { createRoom, fetchRoom, fetchStudents, updateRoom } from './resources/api.js';
+import { mapFormDataToCreateRoom, mapFormDataToUpdateRoom } from './resources/mappers/roomMappers.js';
 import { onDrag, onDragOver, onDrop } from './utils/dragAndDrop.js';
 import createElement from './utils/element.js';
-import { clearError, prepareFormData } from './utils/form.js';
+import { clearError } from './utils/form.js';
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js';
 import { getSelectedOptions } from './utils/getSelectedStudentIds.js';
 import { redirect } from './utils/redirect.js';
 import { isFormElement, isInputElement } from './utils/typecheck.js';
 import { isUserLoggedIn, isUserStudent } from './utils/user.js';
 import { validate, validator } from './utils/validation.js';
-// const socket = createSocket()
 const schema = {
     name: validator()
         .string()
@@ -101,27 +100,23 @@ const onSubmit = async (event) => {
     }
     const formData = new FormData(addEditForm);
     const roomId = getRoomIdFromURL();
-    const roomData = mapToCreateRoom(formData, getSelectedOptions(), roomId);
-    //TODO separate edit and create
-    // if (!roomId) {
-    //     redirect({ path: 'rooms' })
-    //     return
-    // }
     try {
-        //TODO separate edit and create
-        // const result = await updateRoom(roomId, roomData)
-        let studentSchedule = [];
-        document.querySelectorAll('[name="included"]').forEach((studentNode) => {
-            const studetnId = studentNode.getAttribute('value');
-            if (studetnId) {
-                studentSchedule.push(studetnId);
+        if (!roomId) {
+            const roomData = mapFormDataToCreateRoom(formData, getSelectedOptions(), roomId);
+            const response = await createRoom(roomData);
+            if ('error' in response) {
+                displayErrorAlert(response.error);
+                return;
             }
-        });
-        let roomFormData = new FormData(addEditForm);
-        roomFormData.append("students", studentSchedule.join(','));
-        const formData = prepareFormData(roomFormData);
-        const result = await createRoom(formData);
-        // socket.emit({ event: 'updateRoom', data: roomData })
+        }
+        if (roomId) {
+            const roomData = mapFormDataToUpdateRoom(formData, getSelectedOptions(), roomId);
+            const response = await updateRoom(roomId, roomData);
+            if ('error' in response) {
+                displayErrorAlert(response.error);
+                return;
+            }
+        }
         redirect({ path: 'rooms' });
     }
     catch (err) {
@@ -194,11 +189,15 @@ const createStudentsSelectOptions = (students, preIncludedStudents) => {
         ],
     }));
 };
-const fillInInitialFormValues = (roomData) => {
+const fillInInitialFormValues = (roomSchedule) => {
+    const roomData = roomSchedule.roomData;
     document.getElementById('name')?.setAttribute('value', roomData.name);
     document
         .getElementById('description')
         ?.setAttribute('value', roomData.description);
+    document
+        .getElementById('duration')
+        ?.setAttribute('value', String(roomData.turnDuration ?? ''));
     const startTime = document.getElementById('startTime');
     if (startTime && isInputElement(startTime)) {
         startTime.value = roomData.startTime;
@@ -207,6 +206,7 @@ const fillInInitialFormValues = (roomData) => {
 };
 const loadData = async () => {
     const roomId = getRoomIdFromURL();
+    let studentData = [];
     try {
         const studentsData = await fetchStudents();
         if (!studentsData.success) {
@@ -216,12 +216,7 @@ const loadData = async () => {
         if (!studentsData.data) {
             return redirect({ path: 'rooms' });
         }
-        const container = document.getElementById('select');
-        const options = createStudentsSelectOptions(studentsData.data, [
-            '12',
-            '14',
-        ]);
-        options.map((option) => container?.appendChild(option));
+        studentData = studentsData.data;
     }
     catch (err) {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' });
@@ -230,20 +225,23 @@ const loadData = async () => {
         return;
     }
     try {
-        const roomData = await fetchRoom(roomId);
-        if (!roomData.success) {
+        const response = await fetchRoom(roomId);
+        if (!response.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' });
             return;
         }
-        if (!roomData.data || !roomData.data) {
+        if (!response.data || !response.data) {
             return redirect({ path: 'rooms' });
         }
         if (isUserStudent() &&
-            (roomData.data.status === 'closed' ||
-                roomData.data.status === 'not-started')) {
+            (response.data.roomData.status === 'closed' ||
+                response.data.roomData.status === 'not-started')) {
             return redirect({ path: 'rooms' });
         }
-        fillInInitialFormValues(roomData.data);
+        const container = document.getElementById('select');
+        const options = createStudentsSelectOptions(studentData, response.data.schedule.map((elem) => elem.studentId));
+        options.map((option) => container?.appendChild(option));
+        fillInInitialFormValues(response.data);
     }
     catch (err) {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' });

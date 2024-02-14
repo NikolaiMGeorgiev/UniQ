@@ -1,3 +1,4 @@
+import { io } from 'socket.io-client'
 import { isUserStudent } from '../utils/user.js'
 import { CreateRoom, UpdateRoom } from './types.js'
 

@@ -4,7 +4,7 @@ type AddErrorType = (name: string, errorMessage: string) => void
 
 type ClearErrorType = (inputId: string) => void
 
-type PrepareFormData = (data: FormData) => string
+type PrepareFormData = (data: FormData) => { [key: string]: any; }
 
 export const addError: AddErrorType = (name, errorMessage) => {
     if (document.getElementById(`error-message-${name}`)?.childNodes.length) {
@@ -36,5 +36,5 @@ export const prepareFormData: PrepareFormData = (data: FormData) => {
     data.forEach((value, key) => {
         fromDataJSON[key] = value;
     });
-    return JSON.stringify(fromDataJSON)
+    return fromDataJSON
 }

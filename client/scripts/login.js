@@ -1,4 +1,4 @@
-import { clearError, prepareFormData } from './utils/form.js';
+import { clearError } from './utils/form.js';
 import { login } from './resources/api.js';
 import { showMessage, clearMessage } from './utils/messages.js';
 import { DEFAULT_ERROR_MESSAGE } from './resources/constants.js';
@@ -6,6 +6,7 @@ import { isFormElement } from './utils/typecheck.js';
 import { validate, validator } from './utils/validation.js';
 import { redirect } from './utils/redirect.js';
 import { isUserLoggedIn } from './utils/user.js';
+import { mapFormDataToLogin } from './resources/mappers/loginMappers.js';
 const schema = {
     password: validator()
         .password()
@@ -37,14 +38,15 @@ const onLogin = async (event) => {
         return;
     }
     try {
-        const formData = prepareFormData(new FormData(loginForm));
+        const formData = mapFormDataToLogin(new FormData(loginForm));
         const response = await login(formData);
-        if (!response.success) {
+        if (!response.success && 'error' in response) {
             showMessage('error-message', response.error?.message);
         }
         else {
             localStorage.setItem('accessToken', response.data.token);
             localStorage.setItem('role', response.data.role);
+            localStorage.setItem('id', response.data.id);
             redirect({ path: 'login' });
             return;
         }

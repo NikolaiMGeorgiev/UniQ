@@ -24,5 +24,5 @@ export const prepareFormData = (data) => {
     data.forEach((value, key) => {
         fromDataJSON[key] = value;
     });
-    return JSON.stringify(fromDataJSON);
+    return fromDataJSON;
 };
