@@ -24,33 +24,28 @@ class DatabaseHelper {
         }
     }
 
-    // async queryJoin(collectionName, match, joinBy) {
-    //   try {
-    //     await this.client.connect();
-    //     const database = this.client.db(DATABASE_NAME);
-    //     const collection = database.collection(collectionName);
-    //     return await collection.aggregate([
-    //       { $match: match },
-    //       { $lookup: joinBy }
-    //     ]).toArray();
-    //   } finally {
-    //     await this.client.close();
-    //   }
-    // }
+    formatResult(data) {
+      if (data._id) {
+        return formatId(data);
+      }
+      if (data.length) {
+        return data.map(item => {
+          return formatId(item);
+        });
+      }
+      return data;
 
-    // async queryMutliple(data, callbacks) {
-    //     try {
-    //         await this.client.connect();
-    //         const database = this.client.db(DATABASE_NAME);
-    //         for (let i in callbacks) {
-    //             let callback = callbacks[i];
-    //             let callbackData = data[i];
-    //             await callback(database, callbackData);
-    //         }
-    //       } finally {
-    //         await this.client.close();
-    //       }
-    // }
+      function formatId(item) {
+        return Object.keys(item).reduce((acc, key) => {
+          if (key === "_id") {
+            acc.id = item[key].toString();
+          } else {
+            acc[key] = item[key];
+          }
+          return acc;
+        }, {});
+      }
+    }
 }
 
 export { DatabaseHelper };

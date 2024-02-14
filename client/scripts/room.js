@@ -39,23 +39,24 @@ const loadRoomData = async () => {
         return redirect({ path: 'rooms' });
     }
     try {
-        const roomData = await fetchRoom(roomId);
+        const roomAndSheduleData = await fetchRoom(roomId);
         // const studentsData = await fetchRoom(roomId)
-        if (!roomData.success) {
+        if (!roomAndSheduleData.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' });
             return;
         }
-        if (!roomData.data) {
+        if (!roomAndSheduleData.data) {
             return redirect({ path: 'rooms' });
         }
+        const roomData = roomAndSheduleData.data.roomData;
         if (isUserStudent() &&
-            (roomData.data.status === 'closed' ||
-                roomData.data.status === 'not-started')) {
+            (roomData.status === 'closed' ||
+                roomData.status === 'not-started')) {
             return redirect({ path: 'rooms' });
         }
         const container = document.getElementById('main-container');
         const roomContainer = document.getElementById('room-container');
-        const element = createExpandableRoomContainer(roomData.data, 'room', true, isUserTeacher() ? getButtons() : []);
+        const element = createExpandableRoomContainer(roomData, 'room', true, isUserTeacher() ? getButtons() : []);
         container?.insertBefore(element, roomContainer);
     }
     catch (err) {
@@ -66,7 +67,7 @@ const loadAllStudents = async () => {
     try {
         const students = await fetchStudents();
         if (!students.success) {
-            displayErrorAlert({ message: 'Error fetching data. Please try again.' })
+            displayErrorAlert({ message: 'Error fetching data. Please try again.' });
             return;
         }
     }

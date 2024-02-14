@@ -1,11 +1,9 @@
 import { displayErrorAlert } from './components/alert.js';
 import { createExpandableRoomContainer } from './components/expandableRoomContainer.js';
 import { deleteRoom, getRooms } from './resources/api.js';
-import { createSocket } from './resources/socket.js';
 import createElement from './utils/element.js';
 import { redirect } from './utils/redirect.js';
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js';
-const socket = createSocket();
 const handleDeleteRoom = async (roomId) => {
     try {
         deleteRoom(roomId);

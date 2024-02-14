@@ -7,9 +7,6 @@ import createElement, { ElementDataType } from './utils/element.js'
 import { redirect } from './utils/redirect.js'
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js'
 
-
-const socket = createSocket()
-
 const handleDeleteRoom = async (roomId: string) => {
     try {
         deleteRoom(roomId)

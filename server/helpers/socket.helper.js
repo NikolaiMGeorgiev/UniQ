@@ -1,44 +1,50 @@
-import { SERVER_URL } from '../../config.js';
-import { getUser } from '../models/users-model.js';
 import { Server } from 'socket.io';
+import { decodeToken, encodeToken } from './reqest-helper.js';
+import { QueueModel } from '../models/queue-model.js';
 
 export class SocketHelper {
     constructor(server, db) {
         this.io = new Server(server);
         this.db = db;
         this.sockets = {};
+        this.queueHabndler = new QueueModel(db);
     }
 
     initSocket() {
-        this.io.on('connection', (socket) => {
-            console.log('A user connected');
-        
-            socket.on('disconnect', () => {
-                console.log('User disconnected');
-            });
-        
-            socket.on('room activated', (roomId) => {
-                io.emit('chat message', msg);
-            });
-        });
-
-        /*
-        console.log(this.io);
-        this.io.on("connection", (socket) => {
-            console.log('connected');
-        });
-
-        io.on("join room", async (data) => {
-            const { userId, roomId } = data;
-            const userData = await db.querySingle("users", userId, getUser);
-            const publicUserData = {
-                id: userId,
-                name: userData.name,
-                name: userData.anem
-            }
+        const io = this.io;
+        io.on('connection', (socket) => {
+            console.log('A user connected', socket.id);
+            const { roomId } = socket.handshake.query;
+            const { token, role } = socket.handshake.auth;
+            const userId = decodeToken(token).id;
             socket.join(roomId);
-            socket.to(roomId).emit("user joined room", publicUserData);
+            
+            if (role === 'teacher' || !userId) {
+                return;
+            }
+
+            io.to(roomId).emit('student joined queue', userId);
+
+            socket.on('disconnect', () => {
+                socket.leave(roomId);
+
+                if (role === 'student') {
+                    io.to(roomId).emit('student left queue', userId);
+                    this.queueHabndler.remove({ roomId, studentId: userId });
+                }
+
+                console.log('User disconnected', userId);
+            });
         });
-        */
+    }
+
+    sendResource(resourceData) {
+        const { studentId, roomId, link } = resourceData;
+        const token = encodeToken(studentId);
+        this.io.to(roomId).emit('receive resource', {resource: link, userToken: token });
+    }
+
+    updateRoomStatus(roomId, status) {
+        this.io.to(roomId).emit('room status update', status);
     }
 }

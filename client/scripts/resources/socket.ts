@@ -1,5 +1,5 @@
-// import { io } from 'socket.io-client'
-import { CreateRoom, UpdateRoom } from './types'
+import { isUserStudent } from '../utils/user.js'
+import { CreateRoom, UpdateRoom } from './types.js'
 
 type EmitArgs = {
     event: 'deleteRoom',
@@ -14,29 +14,35 @@ type EmitArgs = {
     event: 'getRoomStudent',
     data: string
 }
-
-type UserSocketData = {
-    userId: string
-}
-
-type RoomSocketData = {
-    status: string
-}
   
-export const createSocket = () => {
-    const socket = io('http://localhost:8080/');
+export const createSocket = (roomId: string) => {
+    const token = localStorage.getItem("accessToken")
+    const role = localStorage.getItem("role")
+    const socket = io('http://localhost:8080/', { query: {roomId}, auth: {token, role} });
 
-    socket.on("user joined room", (data: UserSocketData) => {
-        console.log(data.userId);
-    });
+    socket.on('student joined queue', (userId: string) => {
+        console.log('student joined queue', userId)
+    })
 
-    socket.on("user left room", (data: UserSocketData) => {
-        console.log(data.userId);
-    });
+    socket.on('student left queue', (userId: string) => {
+        console.log('student left queue - T', userId)
+    })
 
-    socket.on("room status update", (data: RoomSocketData) => {
-        console.log(data.status);
-    });
+    if (isUserStudent()) {
+        const token = localStorage.getItem("accessToken")
+
+        socket.on('room status update', (roomStatus: String) => {
+            console.log('room status update')
+            console.log(roomStatus)
+        })
+    
+        socket.on('receive resource', (resource: String, userToken: string) => {
+            if (token == userToken) {
+                console.log('receive resource')
+                console.log(resource)
+            }
+        })
+    }
 
     return {
         emit: ({ event, data }: EmitArgs) => socket.emit(event, data),

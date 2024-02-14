@@ -1,9 +1,8 @@
 import { displayErrorAlert } from './components/alert.js'
 import { createExpandableRoomContainer } from './components/expandableRoomContainer.js'
 import { createStudentContainer } from './components/studentContainer.js'
-import { fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
+import { callNextStudent, fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
 import { createSocket } from './resources/socket.js'
-import { RoomStudent } from './resources/types.js'
 import { ElementDataType } from './utils/element.js'
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js'
 import { redirect } from './utils/redirect.js'
@@ -48,23 +47,24 @@ const loadRoomData = async () => {
     }
 
     try {
-        const roomData = await fetchRoom(roomId)
+        const roomAndSheduleData = await fetchRoom(roomId)
         // const studentsData = await fetchRoom(roomId)
 
-        if (!roomData.success) {
+        if (!roomAndSheduleData.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' })
             return
         }
 
-        if (!roomData.data) {
+        if (!roomAndSheduleData.data) {
             return redirect({ path: 'rooms' })
         }
 
+        const roomData = roomAndSheduleData.data.roomData;
         if (
             isUserStudent() &&
             (
-                roomData.data.status === 'closed' ||
-                roomData.data.status === 'not-started'
+                roomData.status === 'closed' ||
+                roomData.status === 'not-started'
             )
         ) {
             return redirect({ path: 'rooms' })
@@ -74,7 +74,7 @@ const loadRoomData = async () => {
         const roomContainer = document.getElementById('room-container')
 
         const element = createExpandableRoomContainer(
-            roomData.data,
+            roomData,
             'room',
             true,
             isUserTeacher() ? getButtons() : []

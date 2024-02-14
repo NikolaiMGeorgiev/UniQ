@@ -1,39 +1,32 @@
-async function getRoomQueue(collection, roomId) {
-    return await collection.find({ room_id: roomId }).sort({ entryTime: 1 }).toArray();  
-}
+export class QueueModel {
+    constructor(db) {
+        this.db = db;
+    }
 
-async function addToQueue(collection, data) {
-    const result = await collection.insertOne({
-        room_id: data.roomId,
-        studentId: data.userId,
-        link: null,
-        entryTime: new Date().getTime()
-    });
-    return result && result.insertedId ? { status: 200 } : { status: 404 };
-}
+    static async add(data) {
+        return await this.updateQueue(data, { entryTime: new Date().getTime() });
+    }
 
-async function addUserLink(collection, data) {
-    return await collection.updateOne(
-        { room_id: data.roomId, studentId: data.studentId }, 
-        { $set: { link: data.link } }
-    );
-}
+    async remove(data) {
+        return await this.updateQueue(data, { entryTime: null, link: null });
+    }
 
-async function emptyQueueByRoom(collection, roomId) {
-    await collection.deleteMany({ room_id: roomId });
-}
+    async next(data) {
+        return await this.updateQueue(data, { link: data.link });
+    }
 
-async function removeFromRoomQueue(collection, data) {
-    return await collection.deleteOne({ 
-       room_id : data.roomId,
-       studentId: data.userId
-    });
-}
+    async finished(data) {
+        return await this.updateQueue(data, { finished: 1, link: null });
+    }
 
-export {
-    addToQueue,
-    getRoomQueue,
-    emptyQueueByRoom,
-    removeFromRoomQueue,
-    addUserLink
+    async updateQueue(data, newData) {
+        return await this.db.querySingle("schedule", data, async (collection) => {
+            const { roomId, studentId } = data;
+            const result =  await collection.updateOne(
+                { room_id: roomId, studentId },
+                { $set: newData }
+            );
+            return result && result.matchedCount === 1 ? { status: 200 } : { status: 404, message: "No such student found" };
+        });
+    }
 }

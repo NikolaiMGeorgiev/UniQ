@@ -9,7 +9,7 @@ export const validator = function () {
     let requiredErrorMessage = '';
     let typeErrorMessage = '';
     let minLengthErrorMessage = '';
-    let minValueErrorMessage = ''
+    let minValueErrorMessage = '';
     return {
         string: function () {
             type = 'string';
@@ -49,11 +49,11 @@ export const validator = function () {
             return this;
         },
         min: function (value, errorMessage) {
-            minValue = value
+            minValue = value;
             minValueErrorMessage =
                 errorMessage ??
-                `The min value for this field is ${minValue}`
-            return this
+                    `The min value for this field is ${minValue}`;
+            return this;
         },
         minLength: function (l, errorMessage) {
             minLength = l;
@@ -73,7 +73,7 @@ export const validator = function () {
                 (typeof value === 'boolean' || value.length < minLength))
                 return minLengthErrorMessage;
             if (typeof value === 'string' && !isNaN(parseInt(value)) && minValue > -Infinity && parseInt(value) < minValue)
-                return minValueErrorMessage
+                return minValueErrorMessage;
             if (type === 'multiselect' && !getSelectedOptions().length)
                 return typeErrorMessage;
             if (typeof value !== 'string')
@@ -114,7 +114,7 @@ const getRadioInputValue = (fields) => {
     let value = false;
     fields.map((field) => {
         if (isInputElement(field)) {
-            value || (value = field.checked);
+            value ||= field.checked;
         }
     });
     return value;

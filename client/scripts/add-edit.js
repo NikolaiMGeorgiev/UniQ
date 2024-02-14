@@ -28,7 +28,7 @@ const schema = {
         .number()
         .min(1)
         .required('Please input duration')
-        .typeError('Please input correct duration value'),
+        .typeError('Please input duration'),
     type: validator().boolean().required('Room type is a required field'),
     students: validator()
         .multiselect()
@@ -46,7 +46,7 @@ const clearErrorsOnChange = () => {
         ?.addEventListener('change', () => clearError('startTime'));
     document
         .getElementById('duration')
-        ?.addEventListener('change', () => clearError('duration'))
+        ?.addEventListener('change', () => clearError('duration'));
     document
         .getElementById('queue')
         ?.addEventListener('change', () => clearError('type-wrapper'));

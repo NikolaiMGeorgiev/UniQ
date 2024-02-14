@@ -1,7 +1,5 @@
 import { addUser, validateUser, getStudents, getUserByEmail } from "../models/users-model.js";
-import { handleResponse } from "../helpers/reqest-helper.js";
-import { JWT_SECRET } from './../../config.js';
-import jwt from 'jsonwebtoken';
+import { encodeToken, handleResponse } from "../helpers/reqest-helper.js";
 
 class UserController {
     
@@ -30,9 +28,7 @@ class UserController {
                 handleResponse(res, result);
                 return;
             }
-
-            var token = jwt.sign({ id: result.data._id }, JWT_SECRET);
-            result.data.token = token;
+            result.data.token = encodeToken(result.data._id.toString());
             handleResponse(res, result);
         });
 

@@ -43,6 +43,7 @@ async function validateUser(collection, userData) {
         email: userData.email, 
         password: userData.password
     });
+
     if (existingUser) {
         return { status: 200, data: existingUser};
     } else {
@@ -52,7 +53,7 @@ async function validateUser(collection, userData) {
 
 function filterUserData(userData) {
     return Object.entries(userData).reduce((acc, curr) => {
-        if (['name', 'email', 'name', 'role', 'password'].indexOf(curr[0]) > -1) {
+        if (['name', 'email', 'role', 'facultyNumber', 'password'].indexOf(curr[0]) > -1) {
             acc[curr[0]] = curr[1];
         }
         return acc;

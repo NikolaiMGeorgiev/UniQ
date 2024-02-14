@@ -1,29 +1,22 @@
 import { ObjectId } from "mongodb";
+import { ROOM_TYPES } from "./rooms-model.js";
 
 async function getScheduleByUser(collection, userId) {
     return await collection.find({ studentId: userId }).toArray();   
 }
 
-async function getScheduleByRoom(collection, roomId) {
-    return await collection.find({ room_id: roomId }).toArray();
+async function getScheduleByRoom(collection, data) {
+    const sortBy = data.type == "queue" ? { entryTime: 1 } : { position: 1 };
+    return await collection.find({ room_id: data._id }).sort(sortBy).toArray();
 }
-
-async function getStudentSchedulePosition(collection, data) {
-    const { studentId, roomId } = data;
-    const roomSchedule = await getScheduleByRoom(collection, roomId);
-    roomSchedule.sort((a, b) => {
-        return new Date(a.startTime) - new Date(b.startTime);
-    });
-    return roomSchedule.findIndex(schedule => schedule.studentId.toString() == studentId);
-}
-
-async function getRemainingScheduleByRoom(collection, roomId) {
-    return await collection.find({ room_id: roomId, finished: 0 }).toArray();
-}
-
 
 async function getUserRoomSchedule(collection, data) {
-    return await collection.findOne({ room_id: data.roomId, studentId: data.studentId });
+    const schedule = await collection.findOne({ room_id: data.roomId, studentId: data.studentId });
+    return schedule ? {
+        studentId: schedule.studentId,
+        position: schedule.position,
+        finished: schedule.finished
+    } : {};
 }
 
 async function addToShcedule(collection, roomData) {
@@ -34,18 +27,13 @@ async function addToShcedule(collection, roomData) {
         scheduleData.push({
             room_id: roomData._id,
             studentId: new ObjectId(student),
-            position: position,
+            position: roomData.type == ROOM_TYPES.schedule ? position : 0,
+            link: null,
+            entryTime: null,
             finished: 0
         });
     }
     return await collection.insertMany(scheduleData);
-}
-
-async function markAsFinished(collection, data) {
-    return await collection.updateOne(
-        { room_id: data.roomId, studentId: data.studentId },
-        { $set: { finished: 1 } }
-    );
 }
 
 async function removeSchedulesForRoom(collection, roomId) {
@@ -66,7 +54,4 @@ export {
     getScheduleByRoom,
     updateStartTimeByRoom,
     getUserRoomSchedule,
-    markAsFinished,
-    getRemainingScheduleByRoom,
-    getStudentSchedulePosition
 }

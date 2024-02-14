@@ -1,4 +1,4 @@
-import { Room, Student, ResponseType, UserTeacher, UserStudent } from './types.js'
+import { Room, Student, ResponseType, UserTeacher, UserStudent, RoomSchedule } from './types.js'
 
 const apiRoute = 'http://localhost:8080'
 const token = localStorage.getItem("accessToken");
@@ -58,7 +58,7 @@ export const fetchRooms: FetchRoomsType = async () => {
     }
 }
 
-type FetchRoomType = (id: string) => Promise<ResponseType<Room | undefined>>
+type FetchRoomType = (id: string) => Promise<ResponseType<RoomSchedule | undefined>>
 export const fetchRoom: FetchRoomType = async (id) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {
         method: 'GET',
@@ -70,8 +70,7 @@ export const fetchRoom: FetchRoomType = async (id) => {
     return {
         success: true,
         error: null,
-        data: responseParsed.data.roomData,
-        schedule: responseParsed.data.schedule
+        data: responseParsed.data
     }
 }
 
@@ -95,19 +94,29 @@ export const updateRoom: UpdateRoomType = async (id, roomData) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {
         method: 'PUT',
         mode: 'cors',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'  },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: roomData,
     })
 
     return response.json()
 }
 
-type DeleteRoomType = (id: string) => Promise<ResponseType<null>>
-export const deleteRoom: DeleteRoomType = async (id) => {
+export const deleteRoom = async (id: string) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
         mode: 'cors',
+    })
+
+    return response.json()
+}
+
+export const callNextStudent = async (roomId: string, data: BodyInit) => {
+    const response = await fetch(`${apiRoute}/api/queue/next/${roomId}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        mode: 'cors',
+        body: data
     })
 
     return response.json()

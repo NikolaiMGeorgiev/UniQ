@@ -53,8 +53,7 @@ export const fetchRoom = async (id) => {
     return {
         success: true,
         error: null,
-        data: responseParsed.data.roomData,
-        schedule: responseParsed.data.schedule
+        data: responseParsed.data
     };
 };
 export const createRoom = async (roomData) => {
@@ -80,6 +79,15 @@ export const deleteRoom = async (id) => {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
         mode: 'cors',
+    });
+    return response.json();
+};
+export const callNextStudent = async (roomId, data) => {
+    const response = await fetch(`${apiRoute}/api/queue/next/${roomId}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        mode: 'cors',
+        body: data
     });
     return response.json();
 };
