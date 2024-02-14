@@ -1,5 +1,5 @@
 export const statuses = [
-    'not-started', 'active', 'break', 'closed'
+    'not-started', 'started', 'break', 'closed'
 ] as const
 export type Status = typeof statuses[number]
 

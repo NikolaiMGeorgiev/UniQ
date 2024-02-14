@@ -20,7 +20,7 @@ const getStatus = (formDataEntries: FormDataEntry, defaultValue: Status): Status
     }
 
     const stringifiedValue = String(formDataEntries.status)
-    if (stringifiedValue === "not-started" || stringifiedValue === "active" || stringifiedValue === "break" || stringifiedValue === "closed") {
+    if (stringifiedValue === "not-started" || stringifiedValue === "started" || stringifiedValue === "break" || stringifiedValue === "closed") {
         return stringifiedValue
     }
 

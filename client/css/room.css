@@ -29,7 +29,7 @@
     font-size: 1rem;
 }
 
-.room-status--active {
+.room-status--started {
     margin: 4px 0;
     color: #4d894f;
 }

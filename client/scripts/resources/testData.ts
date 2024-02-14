@@ -9,7 +9,7 @@ export const rooms: Room[] = [
             ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis congue ornare lacinia. Aenean sagittis massa arcu, quis blandit quam accumsan ac. Etiam eget quam ullamcorper ex cursus mattis vitae in odio. Sed in diam a purus consectetur rutrum. Maecenas lorem eros, facilisis sed mollis id, dapibus nec ipsum. Vestibulum consequat maximus urna in lacinia. Fusce eget erat tellus. Morbi porttitor tincidunt porttitor. Maecenas a eros sollicitudin, posuere massa in, fringilla ex. Aliquam lobortis elit sit amet nibh laoreet tincidunt. Nulla porttitor ac ex non egestas. Quisque tempor est quis eleifend facilisis. Etiam nec venenatis metus. Integer hendrerit iaculis fermentum. Mauris viverra tempus tincidunt. ',
         startTime: '2022-11-27T13:57',
         type: 'queue',
-        status: 'active',
+        status: 'started',
         turnDuration: 30,
     },
     {

@@ -1,5 +1,5 @@
 export const statuses = [
-    'not-started', 'active', 'break', 'closed'
+    'not-started', 'started', 'break', 'closed'
 ];
 export const roomTypes = [
     'schedule',

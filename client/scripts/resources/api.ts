@@ -43,21 +43,6 @@ export const getRooms: GetRooms = async () => {
     }
 }
 
-type FetchRoomsType = () => Promise<ResponseType<Room[]>>
-export const fetchRooms: FetchRoomsType = async () => {
-    // const response = await fetch(`${apiRoute}/rooms`, {
-    //     method: 'GET',
-    //     mode: 'cors'
-    // })
-
-    // return response.json();
-    return {
-        success: true,
-        error: null,
-        data: []//rooms
-    }
-}
-
 type FetchRoomType = (id: string) => Promise<ResponseType<RoomSchedule | undefined>>
 export const fetchRoom: FetchRoomType = async (id) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {

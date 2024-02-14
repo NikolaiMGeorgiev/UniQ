@@ -31,18 +31,6 @@ export const getRooms = async () => {
         data: responseParsed.data
     };
 };
-export const fetchRooms = async () => {
-    // const response = await fetch(`${apiRoute}/rooms`, {
-    //     method: 'GET',
-    //     mode: 'cors'
-    // })
-    // return response.json();
-    return {
-        success: true,
-        error: null,
-        data: [] //rooms
-    };
-};
 export const fetchRoom = async (id) => {
     const response = await fetch(`${apiRoute}/api/rooms/${id}`, {
         method: 'GET',
