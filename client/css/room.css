@@ -107,19 +107,11 @@
     margin: 4px 0;
 }
 
-.students-status--active {
+.students-status--finished {
     color: #4d894f;
 }
 
-.students-status--inactive {
-    color: #606060;
-}
-
-.students-status--finished {
-    color: #eea570;
-}
-
-.students-status--in-exam {
+.students-status--not-finished {
     color: #788bff;
 }
 

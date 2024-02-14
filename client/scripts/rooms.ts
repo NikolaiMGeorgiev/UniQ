@@ -1,7 +1,6 @@
 import { displayErrorAlert } from './components/alert.js'
 import { createExpandableRoomContainer } from './components/expandableRoomContainer.js'
 import { deleteRoom, getRooms } from './resources/api.js'
-import { createSocket } from './resources/socket.js'
 import { Room } from './resources/types.js'
 import createElement, { ElementDataType } from './utils/element.js'
 import { redirect } from './utils/redirect.js'
@@ -9,9 +8,14 @@ import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js'
 
 const handleDeleteRoom = async (roomId: string) => {
     try {
-        deleteRoom(roomId)
+        const response = await deleteRoom(roomId)
+
+        if ('error' in response) {
+            displayErrorAlert({ message: 'Error deleting data. Please try again.' })
+            return
+        }
+
         document.querySelector(`#item-${roomId}`)?.remove()
-        // socket.emit({ event: 'deleteRoom', data: roomId })
     } catch (err) {
         displayErrorAlert({ message: 'Error deleting data. Please try again.' })
     }
@@ -127,21 +131,12 @@ const updateDisplayedElements = (data: Room[]) => {
     })
 }
 
-
 const loadData = async () => {
     try {
         const roomsData = await getRooms();
         if (roomsData.success) {
             displayElements(roomsData.data);
         }
-        // socket.on('getRooms', (data: { data: Room[] }) => {
-        //     displayElements(data.data)
-        // })
-
-        // socket.on('updatedRoom', (data: { data: Room[] }) => {
-        //     updateDisplayedElements(data.data)
-        // });
-
     } catch (err) {
         displayErrorAlert({ message: 'Error loading data. Please try again.' })
     }

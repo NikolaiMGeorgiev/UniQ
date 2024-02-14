@@ -9,6 +9,10 @@ const createInfoContainerElements = (roomData, classPrefix, expanded) => {
         tagName: 'span',
         attributes: [
             {
+                name: 'id',
+                value: 'room-status',
+            },
+            {
                 name: 'class',
                 value: `${classPrefix}-status ${classPrefix}-status--${roomData.status}`,
             },

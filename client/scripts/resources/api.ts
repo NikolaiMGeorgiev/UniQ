@@ -111,12 +111,12 @@ export const deleteRoom = async (id: string) => {
     return response.json()
 }
 
-export const callNextStudent = async (roomId: string, data: BodyInit) => {
+export const callNextStudent = async (roomId: string, data: { link: string }) => {
     const response = await fetch(`${apiRoute}/api/queue/next/${roomId}`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         mode: 'cors',
-        body: data
+        body: JSON.stringify(data)
     })
 
     return response.json()

@@ -3,12 +3,15 @@ import { createExpandableRoomContainer } from './components/expandableRoomContai
 import { createStudentContainer } from './components/studentContainer.js'
 import { callNextStudent, fetchRoom, fetchStudents, updateRoom } from './resources/api.js'
 import { createSocket } from './resources/socket.js'
-import { ElementDataType } from './utils/element.js'
+import { Room, Schedule, Student } from './resources/types.js'
+import createElement, { ElementDataType } from './utils/element.js'
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js'
 import { redirect } from './utils/redirect.js'
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js'
 
-const getButtons = () => {
+let link = 'www.google.bg'
+
+const getButtons = (roomData: Room) => {
     const breakButton: ElementDataType = {
         tagName: 'button',
         attributes: [
@@ -19,7 +22,14 @@ const getButtons = () => {
         eventListeners: [
             {
                 event: 'click',
-                listener: () => console.log('@@@ Break clicked'),
+                listener: async () => {
+                    const roomId = getRoomIdFromURL()
+                    const response = await updateRoom(roomId, { ...roomData, status: 'break' })
+
+                    if ('error' in response) {
+                        displayErrorAlert(response.error)
+                    }
+                },
             },
         ],
     }
@@ -32,7 +42,17 @@ const getButtons = () => {
         ],
         properties: [{ name: 'innerHTML', value: 'End' }],
         eventListeners: [
-            { event: 'click', listener: () => console.log('@@@ End clicked') },
+            {
+                event: 'click',
+                listener: async () => {
+                    const roomId = getRoomIdFromURL()
+                    const response = await updateRoom(roomId, { ...roomData, status: 'closed' })
+
+                    if ('error' in response) {
+                        displayErrorAlert(response.error)
+                    }
+                },
+            },
         ],
     }
 
@@ -48,7 +68,6 @@ const loadRoomData = async () => {
 
     try {
         const roomAndSheduleData = await fetchRoom(roomId)
-        // const studentsData = await fetchRoom(roomId)
 
         if (!roomAndSheduleData.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' })
@@ -77,7 +96,7 @@ const loadRoomData = async () => {
             roomData,
             'room',
             true,
-            isUserTeacher() ? getButtons() : []
+            isUserTeacher() ? getButtons(roomData) : []
         )
 
         container?.insertBefore(element, roomContainer)
@@ -87,13 +106,28 @@ const loadRoomData = async () => {
 }
 
 const loadAllStudents = async () => {
+    const roomId = getRoomIdFromURL()
+
     try {
         const students = await fetchStudents()
+        const roomSchedule = await fetchRoom(roomId)
 
         if (!students.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' })
             return
         }
+
+        if (roomSchedule.success && students.success) {
+            const studentsForRoom = roomSchedule.data?.schedule.map((elem) => ({
+                ...elem,
+                ...students.data.find((student) => student.id === elem.studentId)
+            } as (Student & Schedule)))
+
+            if (studentsForRoom) {
+                studentsForRoom.map((student) => displayStudent(student))
+            }
+        }
+
     } catch (err) {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' })
     }
@@ -113,17 +147,11 @@ const getResourceButton = (resourceUrl: string) => {
         ],
     }
 
-    return [button]
+    return createElement(button)
 }
 
-const displayStudent = (data: RoomStudent) => {
+const displayStudent = (data: (Student & Schedule), buttons?: ElementDataType[]) => {
     const roomsContainer = document.getElementById('room-container')
-
-    if (roomsContainer?.children.length) {
-        roomsContainer.replaceChildren()
-    }
-
-    const buttons = data.examResource ? getResourceButton(data.examResource) : []
 
     const element = createStudentContainer(
         data,
@@ -136,16 +164,75 @@ const displayStudent = (data: RoomStudent) => {
 
 const loadSingleStudent = async () => {
     const roomId = getRoomIdFromURL()
+    const socket = createSocket(roomId)
 
     try {
-        // TODO uncomment when the socket is ready
-        // socket.emit({ event: 'getRoomStudent', data: roomId })
+        const students = await fetchStudents()
+        const roomSchedule = await fetchRoom(roomId)
 
-        // socket.on('roomStudent', (data: { data: RoomStudent }) => {
-        //     displayStudent(data.data)
-        // })
+        if (roomSchedule.success && students.success) {
+            const id = localStorage.getItem("id")
+            const schedule = roomSchedule.data?.schedule.find((elem) => elem.studentId === id)
+            const studentAndSchedule = {
+                ...schedule,
+                ...students.data.find((student) => student.id === schedule?.studentId)
+            } as (Student & Schedule)
+
+            if (studentAndSchedule) {
+                displayStudent(studentAndSchedule)
+            }
+        }
+
+        const token = localStorage.getItem("accessToken")
+
+        socket.on('room status update', (roomStatus: string) => {
+            const roomStatusElement = document.getElementById('room-status')
+            roomStatusElement?.removeAttribute('class')
+            roomStatusElement?.setAttribute('class', `room-status room-status--${roomStatus}`)
+        })
+    
+        socket.on('receive resource', (resource: string, userToken: string) => {
+            if (token == userToken) {
+                link = resource 
+                const buttonsContainer = document.getElementById('buttons-container')
+                const resourceButton = getResourceButton(resource)
+                buttonsContainer?.appendChild(resourceButton)
+            }
+        })
     } catch (err) {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' })
+    }
+}
+
+const loadFooter = () => {
+    const footer = document.getElementById('footer')
+
+    if (!footer?.children.length) {
+        const addRoomButton = createElement({
+            tagName: 'button',
+            attributes: [
+                { name: 'id', value: 'button-call-next-student' },
+                { name: 'class', value: 'button-primary' },
+            ],
+            properties: [
+                { name: 'innerHTML', value: 'Call next student' },
+            ],
+            eventListeners: [
+                {
+                    event: 'click',
+                    listener: async () => {
+                        const roomId = getRoomIdFromURL()
+                        const response = await callNextStudent(roomId, { link })
+    
+                        if ('error' in response) {
+                            displayErrorAlert(response.error)
+                        }
+                    },
+                }
+            ]
+        })
+
+        footer?.appendChild(addRoomButton)
     }
 }
 
@@ -154,12 +241,14 @@ const loadSingleStudent = async () => {
         return redirect({ path: 'login'})
     }
 
+    const roomId = getRoomIdFromURL()
+    if (!roomId) {
+        return redirect({ path: 'rooms' })
+    }
+
     if (isUserTeacher()) {
         await loadAllStudents()
-        const roomId = getRoomIdFromURL()
-        if (!roomId) {
-            return redirect({ path: 'rooms' })
-        }
+        loadFooter()
     } else {
         await loadSingleStudent()
     }

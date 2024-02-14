@@ -1,18 +1,4 @@
 import createElement from '../utils/element.js';
-const getStudentStatus = (status) => {
-    switch (status) {
-        case 'active':
-            return 'In room';
-        case 'inactive':
-            return 'Inactive';
-        case 'finished':
-            return 'Finished exam';
-        case 'in-exam':
-            return 'Taking exam';
-        default:
-            return '';
-    }
-};
 const createInfoContainerElements = (student, classPrefix) => {
     const nameElementConfig = {
         tagName: 'span',
@@ -24,10 +10,10 @@ const createInfoContainerElements = (student, classPrefix) => {
         attributes: [
             {
                 name: 'class',
-                value: `${classPrefix}-status ${classPrefix}-status--${student.status}`,
+                value: `${classPrefix}-status ${classPrefix}-status--${student.finished ? 'finished' : 'not-finished'}`,
             },
         ],
-        properties: [{ name: 'innerHTML', value: getStudentStatus(student.status) }],
+        properties: [{ name: 'innerHTML', value: student.finished ? 'Finished' : 'Not finished' }],
     };
     const headerElement = {
         tagName: 'div',
@@ -42,18 +28,18 @@ const createInfoContainerElements = (student, classPrefix) => {
         ],
         properties: [{ name: 'innerHTML', value: `Faculty number: ${student.facultyNumber}` }],
     };
-    const timeElement = {
+    const positionElement = {
         tagName: 'span',
         attributes: [
             { name: 'class', value: `${classPrefix}-faculty-number` },
-            { name: 'id', value: `facultyNumber-${student.approximateTimeUntilExam}` },
+            { name: 'id', value: `facultyNumber-${student.position}` },
         ],
-        properties: [{ name: 'innerHTML', value: ` Time until turn: ${student.approximateTimeUntilExam}` }],
+        properties: [{ name: 'innerHTML', value: ` Position: ${student.position}` }],
     };
     return [
         headerElement,
         fnElement,
-        timeElement
+        positionElement
     ];
 };
 export const createStudentContainer = (student, classPrefix, buttons) => {
@@ -62,7 +48,7 @@ export const createStudentContainer = (student, classPrefix, buttons) => {
         tagName: 'div',
         attributes: [
             { name: 'class', value: `${classPrefix}-buttons-container` },
-            { name: 'id', value: `buttons-container-${student.id}` },
+            { name: 'id', value: `buttons-container` },
         ],
         children: buttons,
     };

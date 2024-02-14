@@ -87,7 +87,7 @@ export const callNextStudent = async (roomId, data) => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         mode: 'cors',
-        body: data
+        body: JSON.stringify(data)
     });
     return response.json();
 };
