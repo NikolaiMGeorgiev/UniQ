@@ -30,6 +30,15 @@ const clearErrorsOnChange = () => {
 
 const onInput = (inputId: string) => clearError(inputId)
 
+const toggleShowPassword = () => {
+    const passwordField = document.getElementById('password') as HTMLInputElement
+    if (passwordField && passwordField.type === 'password') {
+        passwordField.type = 'text'
+    } else {
+        passwordField.type = 'password'
+    }
+}
+
 const onLogin = async (event: SubmitEvent) => {
     event.preventDefault()
     clearMessage('error-message')
@@ -74,5 +83,8 @@ const onLogin = async (event: SubmitEvent) => {
     document
         .getElementById('email')
         ?.addEventListener('input', () => onInput('email'))
+    document
+        .getElementById('show-password')
+        ?.addEventListener('click', () => toggleShowPassword())
     clearErrorsOnChange()
 })()

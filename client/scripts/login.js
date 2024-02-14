@@ -26,6 +26,15 @@ const clearErrorsOnChange = () => {
         ?.addEventListener('change', () => clearError('password'));
 };
 const onInput = (inputId) => clearError(inputId);
+const toggleShowPassword = () => {
+    const passwordField = document.getElementById('password');
+    if (passwordField && passwordField.type === 'password') {
+        passwordField.type = 'text';
+    }
+    else {
+        passwordField.type = 'password';
+    }
+};
 const onLogin = async (event) => {
     event.preventDefault();
     clearMessage('error-message');
@@ -66,5 +75,8 @@ const onLogin = async (event) => {
     document
         .getElementById('email')
         ?.addEventListener('input', () => onInput('email'));
+    document
+        .getElementById('show-password')
+        ?.addEventListener('click', () => toggleShowPassword());
     clearErrorsOnChange();
 })();
