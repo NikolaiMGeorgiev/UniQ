@@ -44,6 +44,19 @@ export const fetchRoom = async (id) => {
         data: responseParsed.data
     };
 };
+export const fetchQueue = async (id) => {
+    const response = await fetch(`${apiRoute}/api/queue/${id}`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` },
+        mode: 'cors'
+    });
+    const responseParsed = await response.json();
+    return {
+        success: true,
+        error: null,
+        data: responseParsed.data
+    };
+};
 export const createRoom = async (roomData) => {
     const response = await fetch(`${apiRoute}/api/rooms`, {
         method: 'POST',

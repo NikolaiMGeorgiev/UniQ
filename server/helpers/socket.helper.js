@@ -1,18 +1,18 @@
 import { Server } from 'socket.io';
-import { decodeToken, encodeToken } from './reqest-helper.js';
+import { decodeToken } from './reqest-helper.js';
 import { QueueModel } from '../models/queue-model.js';
+import { DatabaseHelper } from './database-helper.js';
 
 export class SocketHelper {
-    constructor(server, db) {
+    constructor(server) {
         this.io = new Server(server);
-        this.db = db;
+        this.db = new DatabaseHelper();
         this.sockets = {};
-        this.queueHabndler = new QueueModel(db);
+        this.queueHabndler = new QueueModel(this.db);
     }
 
     initSocket() {
-        const io = this.io;
-        io.on('connection', (socket) => {
+        this.io.on('connection', (socket) => {
             console.log('A user connected', socket.id);
             const { roomId } = socket.handshake.query;
             const { token, role } = socket.handshake.auth;
@@ -23,13 +23,13 @@ export class SocketHelper {
                 return;
             }
 
-            io.to(roomId).emit('student joined queue', userId);
+            this.io.to(roomId).emit('student joined queue', userId);
 
             socket.on('disconnect', () => {
                 socket.leave(roomId);
 
                 if (role === 'student') {
-                    io.to(roomId).emit('student left queue', userId);
+                    this.io.to(roomId).emit('student left queue', userId);
                     this.queueHabndler.remove({ roomId, studentId: userId });
                 }
 
@@ -39,12 +39,11 @@ export class SocketHelper {
     }
 
     sendResource(resourceData) {
-        const { studentId, roomId, link } = resourceData;
-        const token = encodeToken(studentId);
-        this.io.to(roomId).emit('receive resource', {resource: link, userToken: token });
+        const { token, roomId, link } = resourceData;
+        this.io.to(roomId.toString()).emit('receive resource', link, token);
     }
 
     updateRoomStatus(roomId, status) {
-        this.io.to(roomId).emit('room status update', status);
+        this.io.to(roomId.toString()).emit('room status update', status);
     }
 }

@@ -1,10 +1,11 @@
-import { addUser, validateUser, getStudents, getUserByEmail } from "../models/users-model.js";
+import { addUser, validateUser, getStudents, getUserByEmail, updateStudentToken } from "../models/users-model.js";
 import { encodeToken, handleResponse } from "../helpers/reqest-helper.js";
+import { DatabaseHelper } from "../helpers/database-helper.js";
 
 class UserController {
     
-    constructor(db) {
-        this.db = db;
+    constructor() {
+        this.db = new DatabaseHelper();
     }
 
     async initEndpoints(app) {
@@ -28,7 +29,14 @@ class UserController {
                 handleResponse(res, result);
                 return;
             }
-            result.data.token = encodeToken(result.data._id.toString());
+            
+            const userId = result.data._id;
+            const token = encodeToken(userId.toString());
+            const tokenUpdateResult = await this.db.querySingle("users", {userId, token}, updateStudentToken);
+            if (!tokenUpdateResult || tokenUpdateResult.status != 200) {
+                return handleResponse(res, tokenUpdateResult);
+            }
+            result.data.token = token;
             handleResponse(res, result);
         });
 

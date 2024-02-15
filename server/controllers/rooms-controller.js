@@ -3,20 +3,19 @@ import { USER_TYPE } from "../models/users-model.js";
 import { 
     addToShcedule, 
     getScheduleByUser, 
-    removeSchedulesForRoom, 
-    getUserRoomSchedule, 
-    getScheduleByRoom
+    removeSchedulesForRoom
 } from "../models/schedule-model.js";
-import { getReqestData, handleResponse } from "../helpers/reqest-helper.js";
+import { getReqestData, getRoomData, handleResponse } from "../helpers/reqest-helper.js";
 import { ObjectId } from "mongodb";
 import { QueueModel } from "../models/queue-model.js";
+import { DatabaseHelper } from "../helpers/database-helper.js";
 
 class RoomsController {
     
-    constructor(db, socketHelper) {
-        this.db = db;
+    constructor(socketHelper) {
+        this.db = new DatabaseHelper();
         this.socketHelper = socketHelper;
-        this.queueModel = new QueueModel(db);
+        this.queueModel = new QueueModel(this.db);
     }
 
     async initEndpoints(app) {
@@ -28,36 +27,8 @@ class RoomsController {
 
         app.get('/api/rooms/:roomId', async (req, res) => {
             const requestData = await getReqestData(this.db, req, true);
-            let result = await this.getRoomData(requestData);
-
-            if (!result.data || !result.data.roomData) {
-                return handleResponse(res, result);
-            }
-
-            const resultData = result.data;
-            const roomData = resultData.roomData;
-            const isTeacher = requestData.userId.toString() == roomData.creatorId.toString();
-            if (isTeacher) {
-                const roomUpdateData = { 
-                    _id: roomData._id, 
-                    status: "started" 
-                };
-                if (roomData.status == "not-started") {
-                    this.socketHelper.updateRoomStatus(roomData._id.toString(), "started");
-                }
-                roomData.status = "started";
-                result = await this.db.querySingle("rooms", roomUpdateData, editRoom);
-            } else {
-                const queueData = {
-                    roomId: roomData._id, 
-                    studentId: requestData.userId
-                };
-                result = await this.queueModel.add(queueData);
-            }
-            // TODO: remove the if statement
-            result.data = resultData;
-            
-            handleResponse(res, result);
+            const result = await getRoomData(this.db, requestData);
+            return handleResponse(res, result);
         });
         
         app.post('/api/rooms', async (req, res) => {
@@ -87,12 +58,11 @@ class RoomsController {
                 return handleResponse(res, { status: 403, message: "Invalid operation" });
             }
 
-            if (updatedRoomData.status && roomData.status == updatedRoomData.status) {
-                console.log('update', roomData._id.toString(), updatedRoomData.status);
+            if (updatedRoomData.status && roomData.status != updatedRoomData.status) {
                 this.socketHelper.updateRoomStatus(roomData._id.toString(), updatedRoomData.status);
             }
 
-            updatedRoomData._id = roomId;
+            updatedRoomData._id = new ObjectId(roomId);
             const result = await this.db.querySingle("rooms", updatedRoomData, editRoom);
             handleResponse(res, result);
         });
@@ -129,25 +99,6 @@ class RoomsController {
         const roomIds = schedules.map(schedule => schedule.room_id);
         const data = await db.querySingle("rooms", roomIds, getRoomsById);
    
-        return { data };
-    }
-
-    async getRoomData(requestData) {
-        const roomId = requestData.data.roomId;
-        const roomData = await this.db.querySingle("rooms", roomId, getRoom);
-        const data = { roomData };
-        
-        if (requestData.userData.role == USER_TYPE.student) {
-            data.schedule = await this.db.querySingle(
-                "schedule", 
-                { roomId, studentId: requestData.userId }, 
-                getUserRoomSchedule
-            );
-        } else {
-            const schedule = await this.db.querySingle("schedule", roomData, getScheduleByRoom);
-            data.schedule = this.db.formatResult(schedule)
-        }
-
         return { data };
     }
 }

@@ -1,7 +1,7 @@
 import { displayErrorAlert } from './components/alert.js';
 import { createExpandableRoomContainer } from './components/expandableRoomContainer.js';
 import { createStudentContainer } from './components/studentContainer.js';
-import { callNextStudent, fetchRoom, fetchStudents, updateRoom } from './resources/api.js';
+import { callNextStudent, fetchQueue, fetchRoom, fetchStudents, updateRoom } from './resources/api.js';
 import { createSocket } from './resources/socket.js';
 import createElement from './utils/element.js';
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js';
@@ -82,9 +82,10 @@ const loadRoomData = async () => {
 };
 const loadAllStudents = async () => {
     const roomId = getRoomIdFromURL();
+    const socket = createSocket(roomId);
     try {
         const students = await fetchStudents();
-        const roomSchedule = await fetchRoom(roomId);
+        const roomSchedule = await fetchQueue(roomId);
         if (!students.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' });
             return;
@@ -128,7 +129,7 @@ const loadSingleStudent = async () => {
     const socket = createSocket(roomId);
     try {
         const students = await fetchStudents();
-        const roomSchedule = await fetchRoom(roomId);
+        const roomSchedule = await fetchQueue(roomId);
         if (roomSchedule.success && students.success) {
             const id = localStorage.getItem("id");
             const schedule = roomSchedule.data?.schedule.find((elem) => elem.studentId === id);
@@ -156,6 +157,7 @@ const loadSingleStudent = async () => {
         });
     }
     catch (err) {
+        console.error(err);
         displayErrorAlert({ message: 'Error fetching data. Please try again.' });
     }
 };

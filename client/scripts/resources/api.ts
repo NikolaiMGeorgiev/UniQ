@@ -59,6 +59,22 @@ export const fetchRoom: FetchRoomType = async (id) => {
     }
 }
 
+type FetchQueueType = (id: string) => Promise<ResponseType<RoomSchedule | undefined>>
+export const fetchQueue: FetchQueueType = async (id) => {
+    const response = await fetch(`${apiRoute}/api/queue/${id}`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` },
+        mode: 'cors'
+    })
+
+    const responseParsed = await response.json();
+    return {
+        success: true,
+        error: null,
+        data: responseParsed.data
+    }
+}
+
 type CreateRoomType = (roomData: CreateRoom) => Promise<ResponseType<null>>
 export const createRoom: CreateRoomType = async (roomData) => {
     const response = await fetch(`${apiRoute}/api/rooms`, {

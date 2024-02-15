@@ -1,6 +1,5 @@
 import express from "express";
 import { createServer } from 'http';
-import { DatabaseHelper } from "./helpers/database-helper.js";
 import { UserController } from "./controllers/users-controller.js";
 import { RoomsController } from "./controllers/rooms-controller.js";
 import { QueueController } from "./controllers/queue-controller.js";
@@ -15,14 +14,13 @@ app.use(bodyParser);
 app.use("/api", authenticate);
 app.use(errorHandler);
 
-const db = new DatabaseHelper();
 const server = createServer(app);
-const socketHelper = new SocketHelper(server, db);
+const socketHelper = new SocketHelper(server);
 socketHelper.initSocket();
 
-const userController = new UserController(db);
-const roomsController = new RoomsController(db, socketHelper);
-const queueController = new QueueController(db, socketHelper);
+const userController = new UserController();
+const roomsController = new RoomsController(socketHelper);
+const queueController = new QueueController(socketHelper);
 
 await userController.initEndpoints(app);
 await roomsController.initEndpoints(app);
@@ -35,9 +33,7 @@ function authenticate(req, res, next) {
     
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = decodeToken(token);
-    console.log(decodedToken);
     if (decodedToken) {
-        console.log("VALID");
         req.auth = decodedToken;
         next();
     } else {

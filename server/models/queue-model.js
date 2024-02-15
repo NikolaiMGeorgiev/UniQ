@@ -3,12 +3,12 @@ export class QueueModel {
         this.db = db;
     }
 
-    static async add(data) {
+    async add(data) {
         return await this.updateQueue(data, { entryTime: new Date().getTime() });
     }
 
     async remove(data) {
-        return await this.updateQueue(data, { entryTime: null, link: null });
+        return await this.updateQueue(data, { entryTime: null });
     }
 
     async next(data) {

@@ -28,7 +28,8 @@ async function addUser(collection, userData) {
     const existingUser = await collection.findOne({
         name: userData.name, 
         password: userData.password,
-        email: userData.email
+        email: userData.email,
+        facultyNumber: 62541
     });
     if (!existingUser) {
         await collection.insertOne(filteredUserData);
@@ -51,6 +52,12 @@ async function validateUser(collection, userData) {
     }
 }
 
+async function updateStudentToken(collection, userData) {
+    const { userId, token } = userData;
+    const result = await collection.updateOne({ _id: userId }, { $set: {token} });
+    return result.matchedCount === 1 ? { status: 200 } : { status: 404, message: "No such user" };
+}
+
 function filterUserData(userData) {
     return Object.entries(userData).reduce((acc, curr) => {
         if (['name', 'email', 'role', 'facultyNumber', 'password'].indexOf(curr[0]) > -1) {
@@ -66,5 +73,6 @@ export {
     getStudents,
     getUserByEmail,
     validateUser,
+    updateStudentToken,
     USER_TYPE
 }

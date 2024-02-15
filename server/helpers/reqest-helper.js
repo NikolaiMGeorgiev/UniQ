@@ -1,7 +1,9 @@
 import { ObjectId } from "mongodb";
-import { getUser } from "../models/users-model.js";
+import { USER_TYPE, getUser } from "../models/users-model.js";
 import { DATABASE_ID_COLUMNS, JWT_SECRET } from "../../config.js";
 import jwt from 'jsonwebtoken';
+import { getRoom } from "../models/rooms-model.js";
+import { getScheduleByRoom, getUserRoomSchedule } from "../models/schedule-model.js";
 
 function handleResponse(res, requestData) {
     const responseJSON = {};
@@ -62,6 +64,26 @@ async function getReqestData(db, req, getUserData = false) {
     return fullData;
 }
 
+async function getRoomData(db, requestData) {
+    const roomId = requestData.data.roomId;
+    const roomData = await db.querySingle("rooms", roomId, getRoom);
+    const data = { roomData };
+    
+    if (requestData.userData.role == USER_TYPE.student) {
+        const schedule = await db.querySingle(
+            "schedule", 
+            { roomId, studentId: requestData.userId }, 
+            getUserRoomSchedule
+        );
+        data.schedule = [schedule];
+    } else {
+        const schedule = await db.querySingle("schedule", roomData, getScheduleByRoom);
+        data.schedule = db.formatResult(schedule)
+    }
+
+    return { data };
+}
+
 function decodeToken(token) {
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
@@ -82,5 +104,6 @@ export {
     handleResponse,
     getReqestData,
     encodeToken,
-    decodeToken
+    decodeToken,
+    getRoomData
 }
