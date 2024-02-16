@@ -82,7 +82,6 @@ const loadRoomData = async () => {
 };
 const loadAllStudents = async () => {
     const roomId = getRoomIdFromURL();
-    const socket = createSocket(roomId);
     try {
         const students = await fetchStudents();
         const roomSchedule = await fetchQueue(roomId);
@@ -99,6 +98,7 @@ const loadAllStudents = async () => {
                 studentsForRoom.map((student) => displayStudent(student));
             }
         }
+        const socket = createSocket(roomId);
     }
     catch (err) {
         displayErrorAlert({ message: 'Error fetching data. Please try again.' });
@@ -126,7 +126,6 @@ const displayStudent = (data, buttons) => {
 };
 const loadSingleStudent = async () => {
     const roomId = getRoomIdFromURL();
-    const socket = createSocket(roomId);
     try {
         const students = await fetchStudents();
         const roomSchedule = await fetchQueue(roomId);
@@ -142,6 +141,8 @@ const loadSingleStudent = async () => {
             }
         }
         const token = localStorage.getItem("accessToken");
+        // Create socket after fetch request validation
+        const socket = createSocket(roomId);
         socket.on('room status update', (roomStatus) => {
             const roomStatusElement = document.getElementById('room-status');
             roomStatusElement?.removeAttribute('class');

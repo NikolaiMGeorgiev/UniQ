@@ -52,7 +52,7 @@ export const fetchQueue = async (id) => {
     });
     const responseParsed = await response.json();
     return {
-        success: true,
+        success: responseParsed.success,
         error: null,
         data: responseParsed.data
     };

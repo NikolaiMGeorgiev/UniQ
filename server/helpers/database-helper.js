@@ -19,6 +19,8 @@ class DatabaseHelper {
           const collection = database.collection(collectionName);
           const callbackResult = await callback(collection, data);
           return callbackResult;
+        } catch (err) {
+          console.error(err);
         } finally {
           await this.client.close();
         }

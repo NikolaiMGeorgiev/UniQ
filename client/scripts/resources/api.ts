@@ -52,6 +52,7 @@ export const fetchRoom: FetchRoomType = async (id) => {
     })
 
     const responseParsed = await response.json();
+
     return {
         success: true,
         error: null,
@@ -69,7 +70,7 @@ export const fetchQueue: FetchQueueType = async (id) => {
 
     const responseParsed = await response.json();
     return {
-        success: true,
+        success: responseParsed.success,
         error: null,
         data: responseParsed.data
     }

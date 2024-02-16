@@ -2,11 +2,11 @@ import { Register, Role } from "../types.js";
 import { FormDataEntry, getStringValue } from "./utils.js";
 
 const getRole = (formDataEntries: FormDataEntry, defaultValue: Role): Role => {
-    if (!('type' in formDataEntries)) {
+    if (!('role' in formDataEntries)) {
         return defaultValue
     }
 
-    const stringifiedValue = String(formDataEntries.type)
+    const stringifiedValue = String(formDataEntries.role)
     if ('student' === stringifiedValue || 'teacher' === stringifiedValue) {
         return stringifiedValue
     }
@@ -21,6 +21,6 @@ export const mapFormDataToRegister = (formData: FormData): Register => {
         password: getStringValue(formDataEntries, 'password') ?? '',
         email: getStringValue(formDataEntries, 'email') ?? '',
         name: getStringValue(formDataEntries, 'name') ?? '',
-        role: getRole(formDataEntries, 'student'),
+        role: getRole(formDataEntries, 'teacher'),
     }
 }

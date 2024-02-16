@@ -30,7 +30,7 @@ export const mapFormDataToCreateRoom = (formData, studentIds, id) => {
         startTime: getStringValue(formDataEntries, 'startTime') ?? '',
         type,
         status,
-        turnDuration: 'turnDuration' in formDataEntries ? Number(formDataEntries.turnDuration) : 1,
+        turnDuration: 'duration' in formDataEntries ? Number(formDataEntries.duration) : 1,
         description: getStringValue(formDataEntries, 'description') ?? '',
         students: studentIds,
     };
