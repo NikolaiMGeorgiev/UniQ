@@ -68,12 +68,7 @@ export const fetchQueue: FetchQueueType = async (id) => {
         mode: 'cors'
     })
 
-    const responseParsed = await response.json();
-    return {
-        success: responseParsed.success,
-        error: null,
-        data: responseParsed.data
-    }
+    return response.json()
 }
 
 type CreateRoomType = (roomData: CreateRoom) => Promise<ResponseType<null>>

@@ -17,7 +17,7 @@ const createInfoContainerElements = (roomData, classPrefix, expanded) => {
                 value: `${classPrefix}-status ${classPrefix}-status--${roomData.status}`,
             },
         ],
-        properties: [{ name: 'innerHTML', value: roomData.status }],
+        properties: [{ name: 'innerHTML', value: roomData.status.replaceAll('-', ' ') }],
     };
     const headerElement = {
         tagName: 'div',
@@ -41,7 +41,7 @@ const createInfoContainerElements = (roomData, classPrefix, expanded) => {
         properties: [
             {
                 name: 'innerHTML',
-                value: 'In this room, each student has a specific time assigned for their turn.',
+                value: roomData.type === 'schedule' ? 'In this room, each student has a specific time assigned for their turn (schedule).' : 'In this room, the turn of the students is determined by the order in which they join (queue).',
             },
         ],
     };
@@ -106,7 +106,17 @@ const createInfoContainerElements = (roomData, classPrefix, expanded) => {
             showMoreDetailsButton,
         ];
 };
-export const createExpandableRoomContainer = (roomData, classPrefix, expanded, buttons) => {
+export const createExpandableRoomContainer = (roomData, classPrefix, ...rest) => {
+    return createElement({
+        tagName: 'div',
+        attributes: [
+            { name: 'class', value: `${classPrefix}-item` },
+            { name: 'id', value: `item-${roomData.id}` },
+        ],
+        children: createExpandableRoomContainerElements(roomData, classPrefix, ...rest),
+    });
+};
+export const createExpandableRoomContainerElements = (roomData, classPrefix, expanded, buttons) => {
     const infoContainerElements = createInfoContainerElements(roomData, classPrefix, expanded);
     const buttonsContainer = {
         tagName: 'div',
@@ -124,12 +134,5 @@ export const createExpandableRoomContainer = (roomData, classPrefix, expanded, b
         ],
         children: infoContainerElements,
     };
-    return createElement({
-        tagName: 'div',
-        attributes: [
-            { name: 'class', value: `${classPrefix}-item` },
-            { name: 'id', value: `item-${roomData.id}` },
-        ],
-        children: [infoContainer, buttonsContainer],
-    });
+    return [infoContainer, buttonsContainer];
 };

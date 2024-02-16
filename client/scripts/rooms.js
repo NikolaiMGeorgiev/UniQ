@@ -4,6 +4,7 @@ import { deleteRoom, getRooms } from './resources/api.js';
 import createElement from './utils/element.js';
 import { redirect } from './utils/redirect.js';
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js';
+import { removeLoader } from './utils/utils.js';
 const handleDeleteRoom = async (roomId) => {
     try {
         const response = await deleteRoom(roomId);
@@ -108,15 +109,18 @@ const updateDisplayedElements = (data) => {
 const loadData = async () => {
     try {
         const roomsData = await getRooms();
+        removeLoader('rooms-loader');
         if (roomsData.success) {
             displayElements(roomsData.data);
         }
     }
     catch (err) {
+        removeLoader('rooms-loader');
         displayErrorAlert({ message: 'Error loading data. Please try again.' });
     }
 };
 (() => {
+    console.log('@@@ test');
     if (!isUserLoggedIn()) {
         return redirect({ path: 'login' });
     }

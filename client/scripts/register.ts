@@ -47,9 +47,8 @@ const onRegister = async (event: SubmitEvent) => {
             return
         }
 
-        if ('error' in response && response.error) {
-            response.error?.message
-            displayErrorAlert({ message: response.error?.message })
+        if (!response.success) {
+            displayErrorAlert({ message: response.message })
         }
     } catch (err) {
         console.error(err)

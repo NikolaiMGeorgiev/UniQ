@@ -10,6 +10,7 @@ import { getSelectedOptions } from './utils/getSelectedStudentIds.js'
 import { redirect } from './utils/redirect.js'
 import { isFormElement, isInputElement } from './utils/typecheck.js'
 import { isUserLoggedIn, isUserStudent } from './utils/user.js'
+import { removeLoader } from './utils/utils.js'
 import { validate, validator } from './utils/validation.js'
 
 
@@ -122,8 +123,8 @@ const onSubmit = async (event: Event) => {
         if (!roomId) {
             const roomData = mapFormDataToCreateRoom(formData, getSelectedOptions(), roomId)
             const response = await createRoom(roomData)
-            if ('error' in response) {
-                displayErrorAlert(response.error)
+            if (!response.success) {
+                displayErrorAlert({ message: response.message })
                 return
             }
         }
@@ -131,8 +132,8 @@ const onSubmit = async (event: Event) => {
         if (roomId) {
             const roomData = mapFormDataToUpdateRoom(formData, getSelectedOptions(), roomId)
             const response = await updateRoom(roomId, roomData)
-            if ('error' in response) {
-                displayErrorAlert(response.error)
+            if (!response.success) {
+                displayErrorAlert({ message: response.message })
                 return
             }
         }
@@ -241,6 +242,27 @@ const fillInInitialFormValues = (roomSchedule: RoomSchedule) => {
     document.getElementById(roomData.type)?.setAttribute('checked', 'true')
 }
 
+const enableFieldsOnLoad = () => {
+    document
+        .getElementById('name')
+        ?.removeAttribute('disabled')
+    document
+        .getElementById('description')
+        ?.removeAttribute('disabled')
+    document
+        .getElementById('startTime')
+        ?.removeAttribute('disabled')
+    document
+        .getElementById('duration')
+        ?.removeAttribute('disabled')
+    document
+        .getElementById('schedule')
+        ?.removeAttribute('disabled')
+    document
+        .getElementById('queue')
+        ?.removeAttribute('disabled')
+}
+
 const addStudents = (studentData: Student[], preincludedStudentIds: string[]) => {
     const container = document.getElementById('select')
     const options = createStudentsSelectOptions(studentData, preincludedStudentIds)
@@ -317,5 +339,7 @@ const loadData = async () => {
         .getElementById('button-discard')
         ?.addEventListener('click', onDiscard)
     await loadData()
+    enableFieldsOnLoad()
+    removeLoader('add-edit-loader')
     clearErrorsOnChange()
 })()

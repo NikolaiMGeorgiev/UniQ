@@ -25,6 +25,7 @@
                     <legend class="grey-container-header" id="form-title">
                         Add/Edit Room
                     </legend>
+                    <div id="add-edit-loader" class="loader"></div> 
                     <div>
                         <div class="form-item">
                             <label for="name" class="input-label"
@@ -36,6 +37,7 @@
                                 name="name"
                                 placeholder="Input room name"
                                 class="input"
+                                disabled
                             />
                             <div
                                 id="error-message-name"
@@ -52,6 +54,7 @@
                                 name="description"
                                 placeholder="Input description"
                                 class="input"
+                                disabled
                             />
                             <div
                                 id="error-message-description"
@@ -67,6 +70,7 @@
                                 id="startTime"
                                 name="startTime"
                                 class="input"
+                                disabled
                             />
                             <div
                                 id="error-message-startTime"
@@ -83,6 +87,7 @@
                                 name="duration"
                                 class="input"
                                 min="1"
+                                disabled
                             />
                             <div
                                 id="error-message-duration"
@@ -97,6 +102,7 @@
                                     id="schedule"
                                     name="type"
                                     value="schedule"
+                                    disabled
                                 />
                                 <label for="schedule"
                                     >Each student has a specific time assigned
@@ -109,6 +115,7 @@
                                     id="queue"
                                     name="type"
                                     value="queue"
+                                    disabled
                                 />
                                 <label for="queue"
                                     >First-come, first-served (queue)</label

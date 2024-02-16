@@ -27,7 +27,7 @@ async function addToShcedule(collection, roomData) {
         scheduleData.push({
             room_id: roomData._id,
             studentId: new ObjectId(student),
-            position: roomData.type == ROOM_TYPES.schedule ? position : 0,
+            position: roomData.type == ROOM_TYPES.schedule ? position : undefined,
             link: null,
             entryTime: null,
             finished: 0

@@ -1,5 +1,5 @@
 import { displayErrorAlert } from './components/alert.js';
-import { createExpandableRoomContainer } from './components/expandableRoomContainer.js';
+import { createExpandableRoomContainerElements } from './components/expandableRoomContainer.js';
 import { createStudentContainer } from './components/studentContainer.js';
 import { callNextStudent, fetchQueue, fetchRoom, fetchStudents, updateRoom } from './resources/api.js';
 import { createSocket } from './resources/socket.js';
@@ -7,6 +7,7 @@ import createElement from './utils/element.js';
 import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js';
 import { redirect } from './utils/redirect.js';
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js';
+import { removeLoader } from './utils/utils.js';
 let link = 'www.google.bg';
 const getButtons = (roomData) => {
     const breakButton = {
@@ -22,8 +23,8 @@ const getButtons = (roomData) => {
                 listener: async () => {
                     const roomId = getRoomIdFromURL();
                     const response = await updateRoom(roomId, { ...roomData, status: 'break' });
-                    if ('error' in response) {
-                        displayErrorAlert(response.error);
+                    if (!response.success) {
+                        displayErrorAlert({ message: response.message });
                     }
                 },
             },
@@ -42,8 +43,8 @@ const getButtons = (roomData) => {
                 listener: async () => {
                     const roomId = getRoomIdFromURL();
                     const response = await updateRoom(roomId, { ...roomData, status: 'closed' });
-                    if ('error' in response) {
-                        displayErrorAlert(response.error);
+                    if (!response.success) {
+                        displayErrorAlert({ message: response.message });
                     }
                 },
             },
@@ -58,6 +59,7 @@ const loadRoomData = async () => {
     }
     try {
         const roomAndSheduleData = await fetchRoom(roomId);
+        removeLoader('room-loader');
         if (!roomAndSheduleData.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' });
             return;
@@ -71,12 +73,15 @@ const loadRoomData = async () => {
                 roomData.status === 'not-started')) {
             return redirect({ path: 'rooms' });
         }
-        const container = document.getElementById('main-container');
-        const roomContainer = document.getElementById('room-container');
-        const element = createExpandableRoomContainer(roomData, 'room', true, isUserTeacher() ? getButtons(roomData) : []);
-        container?.insertBefore(element, roomContainer);
+        const roomInfoItem = document.getElementById('room-item');
+        const [infoContainer, buttonsContainer] = createExpandableRoomContainerElements(roomData, 'room', true, isUserTeacher() ? getButtons(roomData) : []);
+        const infoContainerElement = createElement(infoContainer);
+        const buttonsContainerElement = createElement(buttonsContainer);
+        roomInfoItem?.appendChild(infoContainerElement);
+        roomInfoItem?.appendChild(buttonsContainerElement);
     }
     catch (err) {
+        removeLoader('room-loader');
         displayErrorAlert({ message: 'Error fetching data. Please try again.' });
     }
 };
@@ -85,6 +90,7 @@ const loadAllStudents = async () => {
     try {
         const students = await fetchStudents();
         const roomSchedule = await fetchQueue(roomId);
+        removeLoader('students-loader');
         if (!students.success) {
             displayErrorAlert({ message: 'Error fetching data. Please try again.' });
             return;
@@ -101,6 +107,7 @@ const loadAllStudents = async () => {
         const socket = createSocket(roomId);
     }
     catch (err) {
+        removeLoader('students-loader');
         displayErrorAlert({ message: 'Error fetching data. Please try again.' });
     }
 };
@@ -129,6 +136,7 @@ const loadSingleStudent = async () => {
     try {
         const students = await fetchStudents();
         const roomSchedule = await fetchQueue(roomId);
+        removeLoader('students-loader');
         if (roomSchedule.success && students.success) {
             const id = localStorage.getItem("id");
             const schedule = roomSchedule.data?.schedule.find((elem) => elem.studentId === id);
@@ -145,8 +153,11 @@ const loadSingleStudent = async () => {
         const socket = createSocket(roomId);
         socket.on('room status update', (roomStatus) => {
             const roomStatusElement = document.getElementById('room-status');
-            roomStatusElement?.removeAttribute('class');
-            roomStatusElement?.setAttribute('class', `room-status room-status--${roomStatus}`);
+            if (roomStatusElement) {
+                roomStatusElement.removeAttribute('class');
+                roomStatusElement.setAttribute('class', `room-status--${roomStatus}`);
+                roomStatusElement.innerText = roomStatus;
+            }
         });
         socket.on('receive resource', (resource, userToken) => {
             if (token == userToken) {
@@ -158,6 +169,7 @@ const loadSingleStudent = async () => {
         });
     }
     catch (err) {
+        removeLoader('students-loader');
         console.error(err);
         displayErrorAlert({ message: 'Error fetching data. Please try again.' });
     }

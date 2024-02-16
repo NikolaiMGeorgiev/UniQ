@@ -5,6 +5,7 @@ import { Room } from './resources/types.js'
 import createElement, { ElementDataType } from './utils/element.js'
 import { redirect } from './utils/redirect.js'
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js'
+import { removeLoader } from './utils/utils.js'
 
 const handleDeleteRoom = async (roomId: string) => {
     try {
@@ -134,15 +135,18 @@ const updateDisplayedElements = (data: Room[]) => {
 const loadData = async () => {
     try {
         const roomsData = await getRooms();
+        removeLoader('rooms-loader')
         if (roomsData.success) {
             displayElements(roomsData.data);
         }
     } catch (err) {
+        removeLoader('rooms-loader')
         displayErrorAlert({ message: 'Error loading data. Please try again.' })
     }
 }
 
 ;(() => {
+    console.log('@@@ test')
     if (!isUserLoggedIn()) {
         return redirect({ path: 'login'})
     }

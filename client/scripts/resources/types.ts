@@ -22,7 +22,7 @@ export type RoomType = typeof roomTypes[number]
 
 export type Schedule = {
     studentId: string
-    position: number
+    position: number | undefined
     finished: boolean
 }
 
@@ -60,9 +60,7 @@ export type ResponseType<T> = {
     data: T
 } | {
     success: false
-    error: {
-        message: string
-    }
+    message: string
 }
 
 export type Student = {

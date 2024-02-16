@@ -48,8 +48,8 @@ const onLogin = async (event) => {
     try {
         const formData = mapFormDataToLogin(new FormData(loginForm));
         const response = await login(formData);
-        if (!response.success && 'error' in response) {
-            displayErrorAlert({ message: response.error?.message });
+        if (!response.success) {
+            displayErrorAlert({ message: response.message });
         }
         else {
             localStorage.setItem('accessToken', response.data.token);

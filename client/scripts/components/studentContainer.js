@@ -34,13 +34,16 @@ const createInfoContainerElements = (student, classPrefix) => {
             { name: 'class', value: `${classPrefix}-faculty-number` },
             { name: 'id', value: `facultyNumber-${student.position}` },
         ],
-        properties: [{ name: 'innerHTML', value: ` Position: ${student.position}` }],
+        properties: [{ name: 'innerHTML', value: ` Position: ${student.position ? Number(student.position) + 1 : student.position}` }],
     };
-    return [
-        headerElement,
-        fnElement,
-        positionElement
-    ];
+    let elements = [headerElement];
+    if (student.facultyNumber) {
+        elements = [...elements, fnElement];
+    }
+    if (student.position && !isNaN(student.position)) {
+        elements = [...elements, positionElement];
+    }
+    return elements;
 };
 export const createStudentContainer = (student, classPrefix, buttons) => {
     const infoContainerElements = createInfoContainerElements(student, classPrefix);
