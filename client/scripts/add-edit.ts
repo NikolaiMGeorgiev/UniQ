@@ -103,7 +103,7 @@ const onStudentAddOrRemove = (event: Event) => {
     }
 }
 
-const onSubmit = async (event: Event) => {
+export const onSubmit = async (event: Event) => {
     event.preventDefault()
     const addEditForm = document.getElementById('add-edit-form')
 
@@ -144,7 +144,7 @@ const onSubmit = async (event: Event) => {
     }
 }
 
-const onDiscard = () => {
+export const onDiscard = () => {
     history.back()
 }
 

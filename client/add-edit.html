@@ -10,8 +10,9 @@
         <link rel="stylesheet" href="css/add-edit.css" />
         <script type="module" src="./scripts/add-edit.js" defer></script>
         <script type="module" src="./scripts/logout.js" defer></script>
+        <script type="module" src="./scripts/components/webComp.js" async defer></script>
     </head>
-    <body>
+    <body>      
         <header class="header">
             <a class="title" href="index.html"> UniQ </a>
             <div class="links">
@@ -144,23 +145,11 @@
                         </div>
                     </div>
                     <div id="error-message" class="error-message"></div>
+                    <add-edit-footer></add-edit-footer>
                     <div
+                        id="add-edit-footer"
                         class="grey-container-footer add-edit-room-container-footer"
                     >
-                        <button
-                            id="button-discard"
-                            class="button-danger"
-                            type="button"
-                        >
-                            Discard
-                        </button>
-                        <button
-                            id="button-save"
-                            class="button-primary"
-                            type="submit"
-                        >
-                            Save
-                        </button>
                     </div>
                 </form>
             </div>

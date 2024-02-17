@@ -89,7 +89,7 @@ const onStudentAddOrRemove = (event) => {
         }
     }
 };
-const onSubmit = async (event) => {
+export const onSubmit = async (event) => {
     event.preventDefault();
     const addEditForm = document.getElementById('add-edit-form');
     if (!addEditForm || !isFormElement(addEditForm)) {
@@ -124,7 +124,7 @@ const onSubmit = async (event) => {
         displayErrorAlert({ message: 'Error updating data. Please try again.' });
     }
 };
-const onDiscard = () => {
+export const onDiscard = () => {
     history.back();
 };
 const createStudentsSelectOptions = (students, preIncludedStudents) => {
