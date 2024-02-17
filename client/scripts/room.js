@@ -8,7 +8,7 @@ import { getRoomIdFromURL } from './utils/getRoomIdFromURL.js';
 import { redirect } from './utils/redirect.js';
 import { isUserLoggedIn, isUserStudent, isUserTeacher } from './utils/user.js';
 import { removeLoader } from './utils/utils.js';
-let link = 'www.google.bg';
+let link = 'https://zoom.us/';
 const getButtons = (roomData) => {
     const breakButton = {
         tagName: 'button',
