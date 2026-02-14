@@ -1,0 +1,131 @@
+.main-container {
+    margin: auto;
+}
+
+.room-item {
+    margin: 1rem 0;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: #fff;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    box-shadow:
+        0 4px 8px 0 #d9d9d9,
+        0 6px 20px 0 #d9d9d9;
+    min-height: 50px;
+}
+
+.room-info-container {
+    display: grid;
+}
+
+.room-item-header {
+    display: flex;
+    gap: 1rem;
+}
+
+.room-title {
+    margin: 4px 0;
+    font-size: 1rem;
+}
+
+.room-status--started {
+    margin: 4px 0;
+    color: #4d894f;
+}
+
+.room-status--break {
+    margin: 4px 0;
+    color: #eea570;
+}
+
+.room-status--not-started {
+    margin: 4px 0;
+    color: #606060;
+}
+
+.room-status--closed {
+    margin: 4px 0;
+    color: #ee7070;
+}
+
+.room-description {
+    color: #666666;
+    font-size: 0.75rem;
+    margin: 4px 0;
+}
+
+.room-schedule-info {
+    color: #666666;
+    font-size: 0.75rem;
+    margin: 4px 0;
+    width: 100%;
+}
+
+.room-button-break {
+    background: none;
+    border: none;
+    height: 30px;
+    color: #eea570;
+    border-radius: 2px;
+}
+
+.room-button-end {
+    background: none;
+    border: none;
+    height: 30px;
+    color: #ee7070;
+    border-radius: 2px;
+}
+
+.room-buttons-container {
+    display: flex;
+    align-items: center;
+}
+
+.students-info-container {
+    display: grid;
+}
+
+.students-item {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 4px;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.students-title {
+    margin: 4px 0;
+    font-size: 1rem;
+}
+
+.students-status {
+    margin: 4px 0;
+}
+
+.students-status--finished {
+    color: #4d894f;
+}
+
+.students-status--not-finished {
+    color: #788bff;
+}
+
+.students-item-header {
+    display: flex;
+    gap: 1rem;
+}
+
+.students-faculty-number {
+    color: #666666;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin: 4px 0;
+}

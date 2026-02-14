@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="bg">
+    <head>
+        <meta charset="UTF-8" />
+        <title>UniQ | Rooms</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="css/common.css" />
+        <link rel="stylesheet" href="css/rooms.css" />
+        <link rel="stylesheet" href="css/grey-container.css" />
+        <script src="/node_modules/socket.io/client-dist/socket.io.js" defer></script>
+        <script type="module" src="./scripts/rooms.js" defer></script>
+        <script type="module" src="./scripts/logout.js" defer></script>
+    </head>
+    <body>
+        <header class="header">
+            <a class="title" href="index.html"> UniQ </a>
+            <div class="links">
+                <a id="rooms" href="rooms.html">All Rooms</a>
+                <a id="logout">Logout</a>
+            </div>
+        </header>
+        <main id="main-container" class="main-container">
+            <div class="grey-container" id="container">
+                <div class="grey-container-content" id="rooms-container">
+                    <div id="rooms-loader" class="loader"></div> 
+                </div>
+                <div class="grey-container-footer" id="footer"></div>
+            </div>
+        </main>
+    </body>
+</html>

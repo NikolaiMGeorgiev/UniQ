@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="bg">
+    <head>
+        <meta charset="UTF-8" />
+        <title>UniQ | Login</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="css/common.css" />
+        <link rel="stylesheet" href="css/form.css" />
+        <link rel="stylesheet" href="css/grey-container.css" />
+        <script type="module" src="./scripts/login.js" defer></script>
+    </head>
+    <body>
+        <header class="header">
+            <a class="title" href="index.html"> UniQ </a>
+            <div class="links">
+                <a id="sign_in" href="login.html">Login</a>
+                <a id="register" href="register.html">Register</a>
+            </div>
+        </header>
+        <main class="main-container">
+            <div class="grey-container">
+                <form class="form" id="login-form" novalidate="novalidate">
+                    <legend class="grey-container-header" id="form-title">
+                        Login
+                    </legend>
+                    <div>
+                        <div class="form-item">
+                            <label for="email" class="input-label"
+                                >Email:</label
+                            >
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="Input email"
+                                class="input"
+                            />
+                            <div
+                                id="error-message-email"
+                                class="error-message"
+                            ></div>
+                        </div>
+                        <div class="form-item">
+                            <label for="password" class="input-label"
+                                >Password:</label
+                            >
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Input password"
+                                class="input"
+                            />
+                            <div
+                                id="error-message-password"
+                                class="error-message"
+                            ></div>
+                        </div>
+                        <input type="checkbox" id="show-password">Show password
+                    </div>
+                    <div id="error-message" class="error-message"></div>
+                    <div class="grey-container-footer">
+                        <a href="register.html"
+                            >No profile? Click here to register.</a
+                        >
+                        <button
+                            id="button-login"
+                            class="button-primary"
+                            type="submit"
+                        >
+                            Log in
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </body>
+</html>

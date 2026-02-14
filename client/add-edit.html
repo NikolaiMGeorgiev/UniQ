@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="bg">
+    <head>
+        <meta charset="UTF-8" />
+        <title>UniQ | Room</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="css/common.css" />
+        <link rel="stylesheet" href="css/form.css" />
+        <link rel="stylesheet" href="css/grey-container.css" />
+        <link rel="stylesheet" href="css/add-edit.css" />
+        <script type="module" src="./scripts/add-edit.js" defer></script>
+        <script type="module" src="./scripts/logout.js" defer></script>
+        <script type="module" src="./scripts/components/footer.js" async defer></script>
+    </head>
+    <body>      
+        <header class="header">
+            <a class="title" href="index.html"> UniQ </a>
+            <div class="links">
+                <a id="rooms" href="rooms.html">All Rooms</a>
+                <a id="logout">Logout</a>
+            </div>
+        </header>
+        <main id="main-container" class="main-container">
+            <div class="grey-container" id="add-edit-room-container">
+                <form class="form" id="add-edit-form" novalidate="novalidate">
+                    <legend class="grey-container-header" id="form-title">
+                        Add/Edit Room
+                    </legend>
+                    <div id="add-edit-loader" class="loader"></div> 
+                    <div>
+                        <div class="form-item">
+                            <label for="name" class="input-label"
+                                >Room name:</label
+                            >
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                placeholder="Input room name"
+                                class="input"
+                                disabled
+                            />
+                            <div
+                                id="error-message-name"
+                                class="error-message"
+                            ></div>
+                        </div>
+                        <div class="form-item">
+                            <label for="description" class="input-label"
+                                >Description:</label
+                            >
+                            <input
+                                type="text"
+                                id="description"
+                                name="description"
+                                placeholder="Input description"
+                                class="input"
+                                disabled
+                            />
+                            <div
+                                id="error-message-description"
+                                class="error-message"
+                            ></div>
+                        </div>
+                        <div class="form-item">
+                            <label for="startTime" class="input-label"
+                                >Start time:</label
+                            >
+                            <input
+                                type="datetime-local"
+                                id="startTime"
+                                name="startTime"
+                                class="input"
+                                disabled
+                            />
+                            <div
+                                id="error-message-startTime"
+                                class="error-message"
+                            ></div>
+                        </div>
+                        <div class="form-item">
+                            <label for="duration" class="input-label"
+                                >Duration:</label
+                            >
+                            <input
+                                type="text"
+                                id="duration"
+                                name="duration"
+                                class="input"
+                                min="1"
+                                disabled
+                            />
+                            <div
+                                id="error-message-duration"
+                                class="error-message"
+                            ></div>
+                        </div>
+                        <div class="form-item" id="type-wrapper">
+                            <p class="input-label">Room type:</p>
+                            <div>
+                                <input
+                                    type="radio"
+                                    id="schedule"
+                                    name="type"
+                                    value="schedule"
+                                    disabled
+                                />
+                                <label for="schedule"
+                                    >Each student has a specific time assigned
+                                    for their turn (schedule)</label
+                                >
+                            </div>
+                            <div>
+                                <input
+                                    type="radio"
+                                    id="queue"
+                                    name="type"
+                                    value="queue"
+                                    disabled
+                                />
+                                <label for="queue"
+                                    >First-come, first-served (queue)</label
+                                >
+                            </div>
+                            <div
+                                id="error-message-type-wrapper"
+                                class="error-message"
+                            ></div>
+                        </div>
+                        <div class="form-item" id="students-wrapper">
+                            <label class="input-label">Students:</label>
+                            <div
+                                id="select"
+                                class="students-select"
+                                name="students"
+                            ></div>
+                            <span class="input-label"
+                                >You can set the order of the students by
+                                drag-and-dropping them.</span
+                            >
+                            <div
+                                id="error-message-students"
+                                class="error-message"
+                            ></div>
+                        </div>
+                    </div>
+                    <div id="error-message" class="error-message"></div>
+                    <add-edit-footer></add-edit-footer>
+                    <div
+                        id="add-edit-footer"
+                        class="grey-container-footer add-edit-room-container-footer"
+                    >
+                    </div>
+                </form>
+            </div>
+        </main>
+    </body>
+</html>
